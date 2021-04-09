@@ -1,4 +1,4 @@
-# MSiA423 Project: Avoid Delinquency in Loan Payments
+# Avoid Delinquency in Loan Payments
 
 Project Developer: Binqi Shen
 
