@@ -1,4 +1,4 @@
-# MSiA423 Binq Shen's Project Repository
+# MSiA423 Project: Avoid Delinquency in Loan Payments
 
 Project Developer: Binqi Shen
 
