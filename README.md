@@ -6,6 +6,7 @@ QA support: Yijun Wu
 
 <!-- toc -->
 
+- [Project Charter](#project-charter)
 - [Directory structure](#directory-structure)
 - [Running the app](#running-the-app)
   * [1. Initialize the database](#1-initialize-the-database)
@@ -22,6 +23,32 @@ QA support: Yijun Wu
   * [Workaround for potential Docker problem for Windows.](#workaround-for-potential-docker-problem-for-windows)
 
 <!-- tocstop -->
+
+## Project Charter
+
+### Vision 
+
+Loan payment delinquency happens when the borrower fails to make scheduled payments as both parties agreed upon at first. Late loan payments could have serious adverse consequences for both the borrowers and the lenders. For loan borrowers, delinquent loan payments would not only lead to higher penalty fees, but also have negative impacts on their credit scores, which could severely affect their ability to borrow in the future. On the other hand, loan lenders suffer from being subject to the higher risk of not being able to receive the money as scheduled and the borrower might fail to make payments for more than one payment period. 
+
+With the intention of promoting a financially healthier loan market, this app helps both the loan borrowers and the lenders identify the possibility of loan payment delinquency, even before issuing any loans. If there is a high possibility of delinquent payment, the lender should reconsider the terms and conditions of the loans for the borrower. At the same time, the borrower should reconsider the amount he/she is borrowing. 
+
+### Mission 
+
+The app gives the prediction of whether a loan borrower with certain attributes faces payment delinquency risks. In order to achieve the purpose of this app, a supervised classification algorithm will be leveraged along with the most important attributes of loan borrowers. The data used for this project was obtained from this Credit Card Fraud Detection dataset.
+
+A typical user of the app will be asked to answer a series of questions regarding the attributes of the borrower (potential attributes include total income, education level, family status, etc.). With the user input, the App is going to output the probability of delinquency payment, which can be used to make decisions on whether a payment reminder is needed or whether a new loan should be issued. 
+
+### Success criteria 
+
+*Model Performance Metrics*
+
+- The AUC (Area Under Curve) score will be one of the main model performance metrics because it works well with imbalanced datasets. An AUC of 70% would indicate that the model has good performance and is ready to be deployed in the app. The exact threshold may be negotiated later on.  
+- CCR (Correct Classification Rate) score is another crucial model performance metric. It gives a proxy of the model accuracy by dividing the number of correctly classified observations by the total number of observations. The targeted CCR score for the model deployment is 70%. 
+
+*Business Metrics*
+
+- The monthly loan delinquency rate will be an important business metric here. Through A/B testing, we will be able to see whether following the app’s guidance on granting loans would lower the monthly delinquency rate compared to the results of not following the guidance of the app. 
+- Another crucial business metric is the annual revenue earned by the loan lenders. As the loan market becomes financially healthier, we would expect the loan lenders to receive regular payments and have customers (borrowers) with higher credit scores. Hence the annual revenue will be an essential metric to estimate the business impact to the lenders. 
 
 ## Directory structure 
 
