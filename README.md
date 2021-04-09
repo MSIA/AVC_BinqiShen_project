@@ -1,4 +1,4 @@
-# Avoid Delinquency in Loan Payments
+# Avoiding Delinquency in Loan Payments
 
 Project Developer: Binqi Shen
 
