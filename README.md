@@ -169,7 +169,7 @@ To create the database locally, you may configure the `Engine String` using the 
 
 `export SQLALCHEMY_DATABASE_URI = "YOUR_ENGINE_STRING"`
 
-`docker run -it -e SQLALCHEMY_DATABASE_URI application run.py create_db`
+`docker run -it -e SQLALCHEMY_DATABASE_URI application_data run.py create_db`
 
 Then, run the following commend: `python run.py create_db` to create the local SQLite database at `sqlite:///data/application.db`. 
 
