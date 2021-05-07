@@ -22,6 +22,7 @@ QA support: Yijun Wu
     + [Configure Environment Variables](#configure-environment-variables)
     + [Create the Database on RDS](#create-the-database-on-rds)
     + [Create the Database Locally](#create-the-database-locally)
+    + [Test Connection to Database](#test-connection-to-database)
     
 <!-- tocstop -->
 
