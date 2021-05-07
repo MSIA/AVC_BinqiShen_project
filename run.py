@@ -1,11 +1,11 @@
 import argparse
 import logging.config
 
-from src.add_application import ApplicationManager, create_db
-from config.flaskconfig import SQLALCHEMY_DATABASE_URI
-
 logging.config.fileConfig('config/logging/local.conf')
 logger = logging.getLogger('loan-application-pipeline')
+
+from src.add_application import ApplicationManager, create_db
+from config.flaskconfig import SQLALCHEMY_DATABASE_URI
 
 
 if __name__ == '__main__':
