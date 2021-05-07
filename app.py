@@ -16,8 +16,8 @@ logger = logging.getLogger(app.config["APP_NAME"])
 logger.debug('Web app log')
 
 # Initialize the database session
-from src.add_songs import Tracks, TrackManager
-track_manager = TrackManager(app)
+from src.add_application import Application, ApplicationManager
+application_manager = ApplicationManager(app)
 
 @app.route('/')
 def index():
@@ -31,7 +31,7 @@ def index():
     """
 
     try:
-        tracks = track_manager.session.query(Tracks).limit(app.config["MAX_ROWS_SHOW"]).all()
+        tracks = application_manager.session.query(Application).limit(app.config["MAX_ROWS_SHOW"]).all()
         logger.debug("Index page accessed")
         return render_template('index.html', tracks=tracks)
     except:
@@ -48,7 +48,7 @@ def add_entry():
     """
 
     try:
-        track_manager.add_track(artist=request.form['artist'], album=request.form['album'], title=request.form['title'])
+        application_manager.add_track(artist=request.form['artist'], album=request.form['album'], title=request.form['title'])
         logger.info("New song added: %s by %s", request.form['title'], request.form['artist'])
         return redirect(url_for('index'))
     except:
