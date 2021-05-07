@@ -67,7 +67,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--s3path', default='s3://2021-msia423-shen-binqi/raw/application_data.csv',
                         help="S3 data path to the data")
-    parser.add_argument('--local_path', default='data/sample/raw/application_data.csv',
+    parser.add_argument('--local_path', default='data/sample/application_data.csv',
                         help="local path to the data")
     args = parser.parse_args()
 
