@@ -98,26 +98,26 @@ class ApplicationManager:
         """Seeds an existing database with additional applications.
 
         Args:
-            id: int - ID of loan in the sample
-            target: int - Target variable (1: client with payment difficulties; 0: all other cases)
-            contract_type: str - Identification if loan is cash or revolving
-            gender: str - Gender of the client
-            own_car: str - Flag if the client owns a car
-            own_realty: str - Flag if client owns a house or flat
-            num_children: int - Number of children the client has
-            income_total: float - Income of the client
-            amt_credit: float - Credit amount of the loan
-            amt_annuity: float - Loan annuity
-            amt_goods_price: float - price of the goods for which the loan is given
-            income_type: str - Clients income type
-            edu_type: str - Level of highest education the client achieved
-            family_status: str - Family status of the client
-            days_birth: int - Client's age in days at the time of application
-            days_employed: int - Number of days before the application the person started current employment
-            days_id_change: int - Number of days before the application did client change the identity document
-            phone_contactable: int - Whether the phone provided is reachable
-            cnt_family_members: int - Number of family members does client have
-            amt_req_credit_bureau_day: int - Number of enquiries to Credit Bureau about the client
+            id (int): ID of loan in the sample
+            target (int): Target variable (1: client with payment difficulties; 0: all other cases)
+            contract_type (str): Identification if loan is cash or revolving
+            gender (str): Gender of the client
+            own_car (str): Flag if the client owns a car
+            own_realty (str): Flag if client owns a house or flat
+            num_children (int): Number of children the client has
+            income_total (float): Income of the client
+            amt_credit (float): Credit amount of the loan
+            amt_annuity (float): Loan annuity
+            amt_goods_price (float): price of the goods for which the loan is given
+            income_type (str): Clients income type
+            edu_type (str): Level of highest education the client achieved
+            family_status (str): Family status of the client
+            days_birth (int): Client's age in days at the time of application
+            days_employed (int): Number of days before the application the person started current employment
+            days_id_change (int): Number of days before the application did client change the identity document
+            phone_contactable (int): Whether the phone provided is reachable
+            cnt_family_members (int): Number of family members does client have
+            amt_req_credit_bureau_day (int): Number of enquiries to Credit Bureau about the client
 
         Returns:
             None
