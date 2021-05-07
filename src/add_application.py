@@ -13,8 +13,7 @@ Base = declarative_base()
 
 
 class Application(Base):
-    """Create a data model for the database for capturing loan applicants information
-    """
+    """Create a data model for the database for capturing loan applicants information"""
 
     __tablename__ = 'applications'
 

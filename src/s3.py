@@ -1,8 +1,3 @@
-"""
-Load data from a local file
-
-Adapted codes from: https://github.com/MSIA/2021-msia423/blob/main/aws-s3/s3.py
-"""
 import argparse
 import logging
 import re
@@ -24,13 +19,15 @@ logger = logging.getLogger('s3')
 
 
 def parse_s3(s3path):
-    """
-    parse the S3 path to return bucket name and the S3 path
+    """parse the S3 path to return bucket name and the S3 path
+
     Args:
         s3path (str): full S3 path as input
+
     Returns:
         s3bucket (str): S3 bucket name
         s3path (str): S3 path
+
     """
     regex = r"s3://([\w._-]+)/([\w./_-]+)"
 
@@ -42,13 +39,15 @@ def parse_s3(s3path):
 
 
 def upload_file_to_s3(local_path, s3path):
-    """
-    Upload the file from the local path to s3
+    """Upload the file from the local path to s3
+
     Args:
         local_path (str): the path to the local data
         s3path (str): the s3 path that the data will be uploaded to
+
     Returns:
         None
+
     """
     s3bucket, s3_just_path = parse_s3(s3path)
 
