@@ -165,7 +165,9 @@ docker run -it \
 
 #### Create the Database Locally
 
-To create the database locally, you can run the following commend: `docker run -it application_data run.py create_db`
+To create the database locally, you can run the following commend: 
+
+`docker run -it application_data run.py create_db`
 
 You may configure the `Engine String` using the following commend in your terminal: 
 
