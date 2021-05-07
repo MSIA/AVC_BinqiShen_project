@@ -128,8 +128,12 @@ Run the following commend to load data to S3:
 docker run \
    -e AWS_ACCESS_KEY_ID \
    -e AWS_SECRET_ACCESS_KEY \
-   application_data src/s3.py --local_path={local_file_path} --s3_path={s3_file_path}
+   application_data src/s3.py 
 ```
+
+If you want to upload data from a different local path, specify by adding the following: `--local_path={local_file_path}`
+
+If you want to upload data to a different S3 path, specify by adding the following: `--s3_path={s3_file_path}`
 
 ### 3. Initialize the database 
 
