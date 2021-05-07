@@ -87,7 +87,7 @@ A typical user of the app will be asked to answer a series of questions regardin
 ├── reference/                        <- Any reference material relevant to the project
 │
 ├── src/                              <- Source data for the project 
-│   ├──add_application.py             <- Python script that adds data and creates database
+│   ├──add_application.py             <- Python script that defines the data model for my table in RDS
 │   ├──s3.py                          <- Python script that connects to S3
 │
 ├── test/                             <- Files necessary for running model tests (see documentation below) 
@@ -180,4 +180,28 @@ You may configure the `Engine String` using the following commend in your termin
 `docker run -it -e SQLALCHEMY_DATABASE_URI application_data run.py create_db`
 
 You may also use the following commend: `python run.py create_db` to create the local SQLite database at `sqlite:///data/application.db`. 
+
+
+#### Test Connection to Database 
+
+To test if you can connect to the database, run the following commend: 
+
+```
+docker run -it --rm \
+    mysql:5.7.33 \
+    mysql \
+    -h$MYSQL_HOST \
+    -u$MYSQL_USER \
+    -p$MYSQL_PASSWORD
+```
+
+If successfully connected, you may run the following commends: 
+
+- To show all the databases: `show databases;`
+- To use a particular database: `use <database_name>;`
+- After selecting a database, you can see al the tables in it by running: `show tables;`
+- You may check the columns within a table by running: `show columns from <table_name>;`
+
+
+
 
