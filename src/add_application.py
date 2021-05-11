@@ -7,7 +7,6 @@ from sqlalchemy.orm import sessionmaker
 from flask_sqlalchemy import SQLAlchemy
 
 logger = logging.getLogger(__name__)
-logger.setLevel("INFO")
 
 Base = declarative_base()
 
@@ -39,7 +38,7 @@ class Application(Base):
     amt_req_credit_bureau_day = Column(Integer, unique=False, nullable=True)
 
     def __repr__(self):
-        return '<Track %r>' % self.title
+        return '<Application ID %r>' % self.id
 
 
 def create_db(engine_string: str):

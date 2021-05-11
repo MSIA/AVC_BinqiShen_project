@@ -1,18 +1,21 @@
 import argparse
 import logging.config
-
-logging.config.fileConfig('config/logging/local.conf')
-logger = logging.getLogger('loan-application-pipeline')
+import pkg_resources
 
 from src.add_application import ApplicationManager, create_db
+from src.s3 import upload_file_to_s3
 from config.flaskconfig import SQLALCHEMY_DATABASE_URI
+
+logging.config.fileConfig(pkg_resources.resource_filename(__name__, "config/logging/local.conf"),
+                          disable_existing_loggers=False)
+logger = logging.getLogger('loan-application-pipeline')
 
 
 if __name__ == '__main__':
 
     # Add parsers for both creating a database and adding songs to it
     parser = argparse.ArgumentParser(description="Create and/or add data to database")
-    subparsers = parser.add_subparsers(dest='subparser_name')
+    subparsers = parser.add_subparsers(dest="subparser_name")
 
     # Sub-parser for creating a database
     sb_create = subparsers.add_parser("create_db", description="Create database")
@@ -47,19 +50,16 @@ if __name__ == '__main__':
     if sp_used == 'create_db':
         create_db(args.engine_string)
     elif sp_used == 'ingest':
-        tm = ApplicationManager(engine_string=args.engine_string)
-        tm.add_track(args.id, args.target, args.contract_type,
-                     args.gender, args.own_car, args.own_realty,
-                     args.num_children, args.income_total,
-                     args.amt_credit, args.amt_annuity,
-                     args.amt_goods_price, args.income_type,
-                     args.edu_type, args.family_status,
-                     args.days_birth, args.days_employed,
-                     args.days_id_change, args.phone_contactable,
-                     args.cnt_family_members, args.amt_req_credit_bureau_day)
-        tm.close()
+        am = ApplicationManager(engine_string=args.engine_string)
+        am.add_application(args.id, args.target, args.contract_type,
+                           args.gender, args.own_car, args.own_realty,
+                           args.num_children, args.income_total,
+                           args.amt_credit, args.amt_annuity,
+                           args.amt_goods_price, args.income_type,
+                           args.edu_type, args.family_status,
+                           args.days_birth, args.days_employed,
+                           args.days_id_change, args.phone_contactable,
+                           args.cnt_family_members, args.amt_req_credit_bureau_day)
+        am.close()
     else:
         parser.print_help()
-
-
-
