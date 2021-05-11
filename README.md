@@ -132,7 +132,7 @@ docker run \
    application_data run.py upload_file_to_s3
 ```
 
-The default local path is: 'data/sample/application_data.csv' and the default s3 path is: 's3://2021-msia423-shen-binqi/raw/application_data.csv'. 
+The default local path is: `data/sample/application_data.csv` and the default s3 path is: `s3://2021-msia423-shen-binqi/raw/application_data.csv`. 
 
 If you want to upload data from a different local path, specify by adding the following: `--local_path={local_file_path}`
 
