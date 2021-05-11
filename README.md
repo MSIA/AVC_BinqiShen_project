@@ -112,7 +112,7 @@ A typical user of the app will be asked to answer a series of questions regardin
 ### 2. Load data into S3
 
 #### AWS Credentials Configuration
-To configure AWS credentials, run the following commends in terminal to load your credentials as environment variables: 
+To configure AWS credentials, run the following commands in terminal to load your credentials as environment variables: 
 *Note: Please remember to change the "YOUR_ACCESS_KEY_ID" and "YOUR_SECRET_ACCESS_KEY" below to your own AWS credentials*
 
 `export AWS_ACCESS_KEY_ID="YOUR_ACCESS_KEY_ID"`
@@ -123,7 +123,7 @@ To configure AWS credentials, run the following commends in terminal to load you
 #### Load data into S3
 The data used for this project was obtained from this [Credit Card Fraud Detection](https://www.kaggle.com/mishra5001/credit-card) Kaggle dataset. Since the data i relatively small, there is a copy of the loan application data in this repository with the following path: `data/sample/application_data.csv`. 
 
-Run the following commend to load data to S3: 
+Run the following command to load data to S3: 
 
 ```
 docker run \
@@ -142,7 +142,7 @@ If you want to upload data to a different S3 path, specify by adding the followi
 
 #### Create the Database Locally
 
-To create the database locally, you can run the following commend: 
+To create the database locally, you can run the following command: 
 
 `docker run -it application_data run.py create_db`
 
@@ -175,11 +175,11 @@ Press `I` to enter the "Insert" mode and change the following variables to match
 
 After done with the above, press `esc`, type `wq`, and press `return` on your keyboard to save the changes.
 
-Type the following commend in your terminal to update the .mysqlconfig file: `source .mysqlconfig`
+Type the following command in your terminal to update the .mysqlconfig file: `source .mysqlconfig`
 
 #### Create the Database on RDS
 
-To create the database on RDS, run the following commend in your terminal: 
+To create the database on RDS, run the following command in your terminal: 
 
 ```
 docker run -it \
@@ -193,7 +193,7 @@ docker run -it \
 
 #### Test Connection to Database 
 
-To test if you can connect to the database, run the following commend: 
+To test if you can connect to the database, run the following command: 
 
 ```
 docker run -it --rm \
@@ -204,7 +204,7 @@ docker run -it --rm \
     -p$MYSQL_PASSWORD
 ```
 
-If successfully connected, you may run the following commends: 
+If successfully connected, you may run the following commands: 
 
 - To show all the databases: `show databases;`
 - To use a particular database: `use <database_name>;`
