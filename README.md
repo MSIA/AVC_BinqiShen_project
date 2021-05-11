@@ -19,9 +19,9 @@ QA support: Yijun Wu
     + [AWS Credentials Configuration](#aws-credentials-configuration)
     + [Load data into S3](#load-data-into-s3)
   * [3. Initialize the database](#3-initialize-the-database)
+    + [Create the Database Locally](#create-the-database-locally)
     + [Configure Environment Variables](#configure-environment-variables)
     + [Create the Database on RDS](#create-the-database-on-rds)
-    + [Create the Database Locally](#create-the-database-locally)
     + [Test Connection to Database](#test-connection-to-database)
     
 <!-- tocstop -->
@@ -140,7 +140,28 @@ If you want to upload data to a different S3 path, specify by adding the followi
 
 ### 3. Initialize the database 
 
-#### Configure Environment Variables
+#### Create the Database Locally
+
+To create the database locally, you can run the following commend: 
+
+`docker run -it application_data run.py create_db`
+
+The default Engine String is: `sqlite:///data/application.db`. You may also configure the `Engine String` through using the following 2 methods in your terminal: 
+
+- Method 1: specify the '--engine_string' argument
+
+`docker run -it application_data run.py create_db --engine_string <YOUR_ENGINE_STRING>`
+
+- Method 2: set environment variable 'SQLALCHEMY_DATABASE_URI'
+
+`export SQLALCHEMY_DATABASE_URI = "YOUR_ENGINE_STRING"`
+
+`docker run -it -e SQLALCHEMY_DATABASE_URI application_data run.py create_db`
+
+
+#### Configure Environment Variables 
+
+This step is to prepare for creating the database on RDS.
 
 To configure the `.mysqlconfig` file, run: `vi .mysqlconfig` in terminal. 
 
@@ -169,25 +190,6 @@ docker run -it \
     -e DATABASE_NAME \
     application run.py create_db
 ```
-
-#### Create the Database Locally
-
-To create the database locally, you can run the following commend: 
-
-`docker run -it application_data run.py create_db`
-
-The default Engine String is: `sqlite:///data/application.db`. You may also configure the `Engine String` through using the following 2 methods in your terminal: 
-
-- Method 1: specify the '--engine_string' argument
-
-`docker run -it application_data run.py create_db --engine_string <YOUR_ENGINE_STRING>`
-
-- Method 2: set environment variable 'SQLALCHEMY_DATABASE_URI'
-
-`export SQLALCHEMY_DATABASE_URI = "YOUR_ENGINE_STRING"`
-
-`docker run -it -e SQLALCHEMY_DATABASE_URI application_data run.py create_db`
-
 
 #### Test Connection to Database 
 
