@@ -134,9 +134,9 @@ docker run \
 
 The default local path is: `data/sample/application_data.csv` and the default s3 path is: `s3://2021-msia423-shen-binqi/raw/application_data.csv`. 
 
-If you want to upload data from a different local path, specify by adding the following: `--local_path={local_file_path}`
+If you want to upload data from a different local path, specify by adding the following: `--local_path <local_file_path>`
 
-If you want to upload data to a different S3 path, specify by adding the following: `--s3_path={s3_file_path}`
+If you want to upload data to a different S3 path, specify by adding the following: `--s3_path <s3_file_path>`
 
 ### 3. Initialize the database 
 
@@ -176,11 +176,9 @@ To create the database locally, you can run the following commend:
 
 `docker run -it application_data run.py create_db`
 
-You may configure the `Engine String` using the following commend in your terminal: 
+The default Engine String is: `sqlite:///data/application.db`. You may also configure the `Engine String` using the following commend in your terminal: 
 
-`export SQLALCHEMY_DATABASE_URI = "YOUR_ENGINE_STRING"`
-
-`docker run -it -e SQLALCHEMY_DATABASE_URI application_data run.py create_db`
+`docker run -it application_data run.py create_db --engine_string <YOUR_ENGINE_STRING>`
 
 You may also use the following commend: `python run.py create_db` to create the local SQLite database at `sqlite:///data/application.db`. 
 
