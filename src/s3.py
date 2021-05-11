@@ -62,14 +62,3 @@ def upload_file_to_s3(local_path, s3path):
         logger.error('Please provide AWS credentials via AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY env variables.')
     else:
         logger.info('Data uploaded from %s to %s', local_path, s3path)
-
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--s3path', default='s3://2021-msia423-shen-binqi/raw/application_data.csv',
-                        help="S3 data path to the data")
-    parser.add_argument('--local_path', default='data/sample/application_data.csv',
-                        help="local path to the data")
-    args = parser.parse_args()
-
-    upload_file_to_s3(args.local_path, args.s3path)

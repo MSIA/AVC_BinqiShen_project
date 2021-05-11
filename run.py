@@ -13,7 +13,7 @@ logger = logging.getLogger('loan-application-pipeline')
 
 if __name__ == '__main__':
 
-    # Add parsers for both creating a database and adding songs to it
+    # Add parsers for both creating a database and adding applications to it
     parser = argparse.ArgumentParser(description="Create and/or add data to database")
     subparsers = parser.add_subparsers(dest="subparser_name")
 
@@ -21,6 +21,13 @@ if __name__ == '__main__':
     sb_create = subparsers.add_parser("create_db", description="Create database")
     sb_create.add_argument("--engine_string", default=SQLALCHEMY_DATABASE_URI,
                            help="SQLAlchemy connection URI for database")
+
+    # Sub-parser for uploading data to s3
+    sb_upload = subparsers.add_parser("upload_file_to_s3", help="Upload raw data to s3")
+    sb_upload.add_argument('--s3path', default='s3://2021-msia423-shen-binqi/raw/application_data.csv',
+                        help="S3 data path to the data")
+    sb_upload.add_argument('--local_path', default='data/sample/application_data.csv',
+                        help="local path to the data")
 
     # Sub-parser for ingesting new data
     sb_ingest = subparsers.add_parser("ingest", description="Add data to database")
@@ -61,5 +68,7 @@ if __name__ == '__main__':
                            args.days_id_change, args.phone_contactable,
                            args.cnt_family_members, args.amt_req_credit_bureau_day)
         am.close()
+    elif sp_used == 'upload_file_to_s3':
+        upload_file_to_s3(args.local_path, args.s3path)
     else:
         parser.print_help()
