@@ -24,7 +24,7 @@ if __name__ == '__main__':
 
     # Sub-parser for uploading data to s3
     sb_upload = subparsers.add_parser("upload_file_to_s3", help="Upload raw data to s3")
-    sb_upload.add_argument('--s3path', default='s3://2021-msia423-shen-binqi/raw/application_data.csv',
+    sb_upload.add_argument('--s3_path', default='s3://2021-msia423-shen-binqi/raw/application_data.csv',
                         help="S3 data path to the data")
     sb_upload.add_argument('--local_path', default='data/sample/application_data.csv',
                         help="local path to the data")
@@ -51,6 +51,8 @@ if __name__ == '__main__':
     sb_ingest.add_argument("--phone_contactable", help="Whether the client is reachable by the phone provided")
     sb_ingest.add_argument("--cnt_family_members", help="Number of family members does client have")
     sb_ingest.add_argument("--amt_req_credit_bureau_day", help="# enquiries to Credit Bureau about the client")
+    sb_ingest.add_argument("--engine_string", default='sqlite:///data/application.db',
+                           help="SQLAlchemy Connection URI for database")
 
     args = parser.parse_args()
     sp_used = args.subparser_name
