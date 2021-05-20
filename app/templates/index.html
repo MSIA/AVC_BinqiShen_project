@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <link href="static/basic.css" rel="stylesheet">
+
+    <title>Main Menu for Loan Application</title>
 </head>
 
 <body>
     <h3>
-         <a href = "{{ url_for('index') }}">Penny Lane Music Recommender</a>
+         <a href = "{{ url_for('index') }}">Loan Payment Delinquency Prediction</a>
     </h3>
+    <a href="{{ url_for('about') }}">Read More About This Loan Application</a>
 
     <hr/>
     <table>
@@ -35,6 +38,20 @@
         <input type=text size=15 name=title placeholder="Title">
         <input type=text size=15 name=artist placeholder="Artist">
         <input type=text size=15 name=album placeholder="Album">
+
+        <br />
+          {% for gender in genders %}
+          <input type="radio" id="{{ gender.lower() }}" name="gender" value="{{ gender.lower() }}"/>
+          <label for="{{ gender.lower() }}">{{ gender }}</label>
+          {% endfor %}
+        <br />
+
+        <label for="contract_type">Choose a Contract Type: </label>
+        <select name="contract_type" id="contract_type">
+            <option value="">Cash Loans</option>
+            <option value="">Revolving Loans</option>
+        </select>
+
         <input type=submit value=Add>
       </dl>
     </form>
