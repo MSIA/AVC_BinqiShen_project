@@ -129,10 +129,12 @@ Run the following command to load data to S3:
 docker run \
    -e AWS_ACCESS_KEY_ID \
    -e AWS_SECRET_ACCESS_KEY \
-   application_data run.py upload_file_to_s3
+   application_data run.py upload_file_to_s3 \
+   --local_path <local_file_path> \                  
+   --s3_path <s3_file_path> 
 ```
 
-The default local path is: `data/sample/application_data.csv` and the default s3 path is: `s3://2021-msia423-shen-binqi/raw/application_data.csv`. 
+Without specifying `--local_path` and `s3_path`, the default local path is: `data/sample/application_data.csv` and the default s3 path is: `s3://2021-msia423-shen-binqi/raw/application_data.csv`. 
 
 If you want to upload data from a different local path, specify by adding the following: `--local_path <local_file_path>`
 
@@ -170,8 +172,8 @@ Press `I` to enter the "Insert" mode and change the following variables to match
 - `MYSQL_USER` = "YOUR_RDS_USERNAME"
 - `MYSQL_PASSWORD` = "YOUR_RDS_PASSWORD"
 - `MYSQL_HOST` = "YOUR_RDS_HOST_ENDPOINT"
-- `MYSQL_PORT` = 3306 
-- `DATABASE_NAME` = msia423_db
+- `MYSQL_PORT` = "YOUR_PORT"
+- `DATABASE_NAME` = "YOUR_DATABASE"
 
 After done with the above, press `esc`, type `wq`, and press `return` on your keyboard to save the changes.
 
