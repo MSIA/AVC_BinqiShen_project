@@ -6,22 +6,24 @@ QA support: Yijun Wu
 
 <!-- toc -->
 
+## Table of Contents 
+
 - [Project Charter](#project-charter)
+  * [Vision](#vision)
+  * [Mission](#mission)
+  * [Success Criteria](#success-criteria)
 - [Directory structure](#directory-structure)
 - [Running the app](#running-the-app)
-  * [1. Initialize the database](#1-initialize-the-database)
-    + [Create the database with a single song](#create-the-database-with-a-single-song)
-    + [Adding additional songs](#adding-additional-songs)
-    + [Defining your engine string](#defining-your-engine-string)
-      - [Local SQLite database](#local-sqlite-database)
-  * [2. Configure Flask app](#2-configure-flask-app)
-  * [3. Run the Flask app](#3-run-the-flask-app)
-- [Running the app in Docker](#running-the-app-in-docker)
-  * [1. Build the image](#1-build-the-image)
-  * [2. Run the container](#2-run-the-container)
-  * [3. Kill the container](#3-kill-the-container)
-  * [Workaround for potential Docker problem for Windows.](#workaround-for-potential-docker-problem-for-windows)
-
+  * [1. Build the Docker Image](#1-build-the-docker-image)
+  * [2. Load data into S3](#2-load-data-into-s3)
+    + [AWS Credentials Configuration](#aws-credentials-configuration)
+    + [Load data into S3](#load-data-into-s3)
+  * [3. Initialize the database](#3-initialize-the-database)
+    + [Create the Database Locally](#create-the-database-locally)
+    + [Configure Environment Variables](#configure-environment-variables)
+    + [Create the Database on RDS](#create-the-database-on-rds)
+    + [Test Connection to Database](#test-connection-to-database)
+    
 <!-- tocstop -->
 
 ## Project Charter
@@ -54,7 +56,7 @@ A typical user of the app will be asked to answer a series of questions regardin
 
 ```
 ├── README.md                         <- You are here
-├── api
+├── app
 │   ├── static/                       <- CSS, JS files that remain static
 │   ├── templates/                    <- HTML (or other code) that is templated and changes based on a set of inputs
 │   ├── boot.sh                       <- Start up script for launching app in Docker container.
@@ -86,6 +88,8 @@ A typical user of the app will be asked to answer a series of questions regardin
 ├── reference/                        <- Any reference material relevant to the project
 │
 ├── src/                              <- Source data for the project 
+│   ├──add_application.py             <- Python script that defines the data model for my table in RDS
+│   ├──s3.py                          <- Python script that connects to S3
 │
 ├── test/                             <- Files necessary for running model tests (see documentation below) 
 │
@@ -95,142 +99,120 @@ A typical user of the app will be asked to answer a series of questions regardin
 ```
 
 ## Running the app
-### 1. Initialize the database 
 
-#### Create the database 
-To create the database in the location configured in `config.py` run: 
+*Note: Please be sure to be connected to the Northwestern VPN and go to the root directory of the repository before you move forward with the following steps.*
 
-`python run.py create_db --engine_string=<engine_string>`
 
-By default, `python run.py create_db` creates a database at `sqlite:///data/tracks.db`.
+### 1. Build the Docker Image 
+*Note: Please be sure your Docker Desktop is open before you move forward with the following steps*
 
-#### Adding songs 
-To add songs to the database:
+`docker build -f app/Dockerfile -t application_data .`
 
-`python run.py ingest --engine_string=<engine_string> --artist=<ARTIST> --title=<TITLE> --album=<ALBUM>`
 
-By default, `python run.py ingest` adds *Minor Cause* by Emancipator to the SQLite database located in `sqlite:///data/tracks.db`.
+### 2. Load data into S3
 
-#### Defining your engine string 
-A SQLAlchemy database connection is defined by a string with the following format:
+#### AWS Credentials Configuration
+To configure AWS credentials, run the following commands in terminal to load your credentials as environment variables: 
+*Note: Please remember to change the "YOUR_ACCESS_KEY_ID" and "YOUR_SECRET_ACCESS_KEY" below to your own AWS credentials*
 
-`dialect+driver://username:password@host:port/database`
+`export AWS_ACCESS_KEY_ID="YOUR_ACCESS_KEY_ID"`
 
-The `+dialect` is optional and if not provided, a default is used. For a more detailed description of what `dialect` and `driver` are and how a connection is made, you can see the documentation [here](https://docs.sqlalchemy.org/en/13/core/engines.html). We will cover SQLAlchemy and connection strings in the SQLAlchemy lab session on 
-##### Local SQLite database 
+`export AWS_SECRET_ACCESS_KEY="YOUR_SECRET_ACCESS_KEY"`
 
-A local SQLite database can be created for development and local testing. It does not require a username or password and replaces the host and port with the path to the database file: 
 
-```python
-engine_string='sqlite:///data/tracks.db'
+#### Load data into S3
+The data used for this project was obtained from this [Credit Card Fraud Detection](https://www.kaggle.com/mishra5001/credit-card) Kaggle dataset. Since the data i relatively small, there is a copy of the loan application data in this repository with the following path: `data/sample/application_data.csv`. 
+
+Run the following command to load data to S3: 
 
 ```
-
-The three `///` denote that it is a relative path to where the code is being run (which is from the root of this directory).
-
-You can also define the absolute path with four `////`, for example:
-
-```python
-engine_string = 'sqlite://///Users/cmawer/Repos/2020-MSIA423-template-repository/data/tracks.db'
+docker run \
+   -e AWS_ACCESS_KEY_ID \
+   -e AWS_SECRET_ACCESS_KEY \
+   application_data run.py upload_file_to_s3 \
+   --local_path <local_file_path> \                  
+   --s3_path <s3_file_path> 
 ```
 
+Without specifying `--local_path` and `s3_path`, the default local path is: `data/sample/application_data.csv` and the default s3 path is: `s3://2021-msia423-shen-binqi/raw/application_data.csv`. 
 
-### 2. Configure Flask app 
+If you want to upload data from a different local path, specify by adding the following: `--local_path <local_file_path>`
 
-`config/flaskconfig.py` holds the configurations for the Flask app. It includes the following configurations:
+If you want to upload data to a different S3 path, specify by adding the following: `--s3_path <s3_file_path>`
 
-```python
-DEBUG = True  # Keep True for debugging, change to False when moving to production 
-LOGGING_CONFIG = "config/logging/local.conf"  # Path to file that configures Python logger
-HOST = "0.0.0.0" # the host that is running the app. 0.0.0.0 when running locally 
-PORT = 5000  # What port to expose app on. Must be the same as the port exposed in app/Dockerfile 
-SQLALCHEMY_DATABASE_URI = 'sqlite:///data/tracks.db'  # URI (engine string) for database that contains tracks
-APP_NAME = "penny-lane"
-SQLALCHEMY_TRACK_MODIFICATIONS = True 
-SQLALCHEMY_ECHO = False  # If true, SQL for queries made will be printed
-MAX_ROWS_SHOW = 100 # Limits the number of rows returned from the database 
+### 3. Initialize the database 
+
+#### Create the Database Locally
+
+To create the database locally, you can run the following command: 
+
+`docker run -it application_data run.py create_db`
+
+The default Engine String is: `sqlite:///data/application.db`. You may also configure the `Engine String` through using the following 2 methods in your terminal: 
+
+- Method 1: specify the '--engine_string' argument
+
+`docker run -it application_data run.py create_db --engine_string <YOUR_ENGINE_STRING>`
+
+- Method 2: set environment variable 'SQLALCHEMY_DATABASE_URI'
+
+`export SQLALCHEMY_DATABASE_URI = "YOUR_ENGINE_STRING"`
+
+`docker run -it -e SQLALCHEMY_DATABASE_URI application_data run.py create_db`
+
+
+#### Configure Environment Variables 
+
+This step is to prepare for creating the database on RDS.
+
+To configure the `.mysqlconfig` file, run: `vi .mysqlconfig` in terminal. 
+
+Press `I` to enter the "Insert" mode and change the following variables to match your credentials. 
+
+- `MYSQL_USER` = "YOUR_RDS_USERNAME"
+- `MYSQL_PASSWORD` = "YOUR_RDS_PASSWORD"
+- `MYSQL_HOST` = "YOUR_RDS_HOST_ENDPOINT"
+- `MYSQL_PORT` = "YOUR_PORT"
+- `DATABASE_NAME` = "YOUR_DATABASE"
+
+After done with the above, press `esc`, type `wq`, and press `return` on your keyboard to save the changes.
+
+Type the following command in your terminal to update the .mysqlconfig file: `source .mysqlconfig`
+
+#### Create the Database on RDS
+
+To create the database on RDS, run the following command in your terminal: 
+
+```
+docker run -it \
+    -e MYSQL_HOST \
+    -e MYSQL_PORT \
+    -e MYSQL_USER \
+    -e MYSQL_PASSWORD \
+    -e DATABASE_NAME \
+    application run.py create_db
 ```
 
-### 3. Run the Flask app 
+#### Test Connection to Database 
 
-To run the Flask app, run: 
+To test if you can connect to the database, run the following command: 
 
-```bash
-python app.py
+```
+docker run -it --rm \
+    mysql:5.7.33 \
+    mysql \
+    -h$MYSQL_HOST \
+    -u$MYSQL_USER \
+    -p$MYSQL_PASSWORD
 ```
 
-You should now be able to access the app at http://0.0.0.0:5000/ in your browser.
+If successfully connected, you may run the following commands: 
 
-## Running the app in Docker 
+- To show all the databases: `show databases;`
+- To use a particular database: `use <database_name>;`
+- After selecting a database, you can see al the tables in it by running: `show tables;`
+- You may check the columns within a table by running: `show columns from <table_name>;`
 
-### 1. Build the image 
 
-The Dockerfile for running the flask app is in the `app/` folder. To build the image, run from this directory (the root of the repo): 
 
-```bash
- docker build -f app/Dockerfile -t pennylane .
-```
 
-This command builds the Docker image, with the tag `pennylane`, based on the instructions in `app/Dockerfile` and the files existing in this directory.
- 
-### 2. Run the container 
-
-To run the app, run from this directory: 
-
-```bash
-docker run -p 5000:5000 --name test pennylane
-```
-You should now be able to access the app at http://0.0.0.0:5000/ in your browser.
-
-This command runs the `pennylane` image as a container named `test` and forwards the port 5000 from container to your laptop so that you can access the flask app exposed through that port. 
-
-If `PORT` in `config/flaskconfig.py` is changed, this port should be changed accordingly (as should the `EXPOSE 5000` line in `app/Dockerfile`)
-
-### 3. Kill the container 
-
-Once finished with the app, you will need to kill the container. To do so: 
-
-```bash
-docker kill test 
-```
-
-where `test` is the name given in the `docker run` command.
-
-### Example using `python3` as an entry point
-
-We have included another example of a Dockerfile, `app/Dockerfile_python` that has `python3` as the entry point such that when you run the image as a container, the command `python3` is run, followed by the arguments given in the `docker run` command after the image name. 
-
-To build this image: 
-
-```bash
- docker build -f app/Dockerfile_python -t pennylane .
-```
-
-then run the `docker run` command: 
-
-```bash
-docker run -p 5000:5000 --name test pennylane app.py
-```
-
-The new image defines the entry point command as `python3`. Building the sample PennyLane image this way will require initializing the database prior to building the image so that it is copied over, rather than created when the container is run. Therefore, please **do the step [Create the database with a single song](#create-the-database-with-a-single-song) above before building the image**.
-
-# Testing
-
-From within the Docker container, the following command should work to run unit tests when run from the root of the repository: 
-
-```bash
-python -m pytest
-``` 
-
-Using Docker, run the following, if the image has not been built yet:
-
-```bash
- docker build -f app/Dockerfile_python -t pennylane .
-```
-
-To run the tests, run: 
-
-```bash
- docker run penny -m pytest
-```
- 
