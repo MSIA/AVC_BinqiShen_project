@@ -3,6 +3,7 @@ import logging.config
 
 from flask import Flask
 from flask import render_template, request, redirect, url_for
+
 from src.add_application import Application, ApplicationManager
 
 # Initialize the Flask application
@@ -34,12 +35,12 @@ def index():
     """
 
     try:
-        tracks = application_manager.session.query(Application).limit(app.config["MAX_ROWS_SHOW"]).all()
+        applications = application_manager.session.query(Application).limit(app.config["MAX_ROWS_SHOW"]).all()
         logger.debug("Index page accessed")
-        return render_template('index.html', tracks=tracks, genders=GENDERS)
+        return render_template('index.html', applications=applications, genders=GENDERS)
     except:
         traceback.print_exc()
-        logger.warning("Not able to display tracks, error page returned")
+        logger.warning("Not able to display loan applications information, error page returned")
         return render_template('error.html')
 
 

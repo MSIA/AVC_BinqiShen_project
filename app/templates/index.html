@@ -17,18 +17,18 @@
     <table>
          <thead>
             <tr>
-               <th>Title</th>
-               <th>Artist</th>
-               <th>Album</th>
+               <th>ContractType</th>
+               <th>Gender</th>
+               <th>OwnsCar</th>
             </tr>
          </thead>
 
          <tbody>
-            {% for track in tracks %}
+            {% for applications in applications %}
                <tr>
-                   <td>{{ track.title }}</td>
-                   <td>{{ track.artist }}</td>
-                   <td>{{ track.album }}</td>
+                   <td>{{ applications.ContractType }}</td>
+                   <td>{{ applications.Gender }}</td>
+                   <td>{{ applications.OwnsCar }}</td>
                </tr>
             {% endfor %}
          </tbody>
