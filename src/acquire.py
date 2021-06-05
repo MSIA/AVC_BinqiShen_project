@@ -20,7 +20,7 @@ def import_data(path, colnames_dict):
 
     """
     data = pd.read_csv(path)
-    logger.info('Data loaded from path %s', path)
+    logger.info('Data loaded from path: %s', path)
     logger.info("The shape of the DataFrame loaded is: %s", data.shape)
 
     # change column names to be lowercase and more understandable

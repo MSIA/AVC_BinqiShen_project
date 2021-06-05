@@ -70,8 +70,10 @@ if __name__ == '__main__':
     # Sub-parser for acquiring data
     sb_acquire = subparsers.add_parser("run_model_pipeline",
                                        description="Acquire data, clean data, featurize data, and run model-pipeline")
-    sb_acquire.add_argument('--file_path', default='data/sample/application_data.csv',
-                            help="Acquire data from specified file path")
+    sb_acquire.add_argument('--s3_path', default='s3://2021-msia423-shen-binqi/raw/application_data.csv',
+                            help="S3 data path to the data")
+    sb_acquire.add_argument('--local_path', default='data/sample/application_data.csv',
+                            help="local path to the data")
 
     args = parser.parse_args()
     sp_used = args.subparser_name
@@ -101,16 +103,22 @@ if __name__ == '__main__':
             conf = yaml.load(f, Loader=yaml.FullLoader)
         logger.info("Configuration file loaded from %s" % args.config)
 
-        raw = import_data(args.file_path, **conf['acquire']['import_data'])
+        # download raw data from s3
+        download_file_from_s3(args.local_path, args.s3_path)
+
+        # model pipeline: clean -> featurize -> one-hot-encode -> model -> evaluation
+        raw = import_data(args.local_path, **conf['acquire']['import_data'])
         cleaned = clean(raw, **conf['acquire']['clean'])
         featurized = featurize(cleaned, **conf['features']['featurize'])
         ohe_data = get_ohe_data(featurized, **conf['features']['get_ohe_data'])
         model_result = train_model(ohe_data, **conf['model']['train_model'])
         rf_mod = model_result[0]
-        joblib.dump(rf_mod, conf['predict']['get_prediction']['model_path'])  # save the model
-        logger.info("Trained model save to location: %s", conf['predict']['get_prediction']['model_path'])
         X_test = model_result[1]
         y_test = model_result[2]
         evaluate_result = evaluate(rf_mod, X_test, y_test)
+
+        # save the trained model
+        joblib.dump(rf_mod, conf['predict']['get_prediction']['model_path'])
+        logger.info("Trained model save to location: %s", conf['predict']['get_prediction']['model_path'])
     else:
         parser.print_help()
