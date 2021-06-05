@@ -32,12 +32,12 @@ logger.info("Configuration file loaded")
 
 @app.route('/')
 def index():
-    """Main view that lists songs in the database.
+    """Main view of the loan application that allows user input applicant information
 
-    Create view into index page that uses data queried from Track database and
-    inserts it into the msiapp/templates/index.html template.
+    Create view into index page that allows users input applicant information
 
-    Returns: rendered html template
+    Returns:
+        rendered html template located at: app/templates/index.html
 
     """
 
@@ -58,7 +58,12 @@ def index():
 def add_entry():
     """View that process a POST with new applicant input
 
-    :return: redirect to index page
+    Add new applicant information to Applications database and get prediction results
+
+    Returns:
+        rendered html template located at: app/templates/result.html if successfully processed,
+        rendered html template located at: app/templates/error.html if any error occurs
+
     """
     if request.method == 'GET':
         return "Visit the homepage to add applicants and get predictions"
@@ -123,9 +128,11 @@ def add_entry():
 
 @app.route('/about', methods=['GET'])
 def about():
-    """Add an 'about' page
+    """View of an 'About' page that has detailed information about the project
 
-    :return: redirect to the 'about' page
+    Returns:
+        rendered html template located at: app/templates/about.html
+
     """
     return render_template('about.html')
 
