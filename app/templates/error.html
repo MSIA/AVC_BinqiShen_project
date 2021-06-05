@@ -3,17 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <link href="static/basic.css" rel="stylesheet">
+    <title>Error Page</title>
+    <style>
+      h1 {
+        text-align: center;
+        color: #424242;
+      }
+      p {
+      text-align: center;
+      font-weight: bold;
+      color: #424242;
+      }
+      div {
+      text-align: center;
+      color: #424242;
+      }
+      body {
+        background-color: #F2F2F2
+      }
+    </style>
 </head>
 
 <body>
-    <h3>
-         <a href = "{{ url_for('index') }}">Error Page for Loan Application</a>
-    </h3>
+    <h1>
+         Error Page for Loan Application
+    </h1>
+    <hr/>
 
     <div class="alert alert-danger" role="alert">
-  <p class="alert-link">We're sorry. There was a problem accessing the database. Please try again later. </p>
+      <p class="alert-link">We're sorry. There was a problem accessing the database. Please try again later. </p>
     </div>
-    <a href="{{ url_for('index') }}">Go Back to the Main Menu of the Application</a>
+    <div>
+        <a href="{{ url_for('index') }}" style = "text-align:center;">Go Back to the Main Menu of the Application</a>
+    </div>
 
 </body>
 </html>
