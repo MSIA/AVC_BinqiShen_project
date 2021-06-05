@@ -1,0 +1,155 @@
+acquire:
+  import_data:
+    colnames_dict:
+      'SK_ID_CURR': 'id'
+      'TARGET': 'target'
+      'NAME_CONTRACT_TYPE': 'contract_type'
+      'CODE_GENDER': 'gender'
+      'FLAG_OWN_CAR': 'own_car'
+      'FLAG_OWN_REALTY': 'own_realty'
+      'CNT_CHILDREN': 'num_children'
+      'AMT_INCOME_TOTAL': 'income_total'
+      'AMT_CREDIT': 'amt_credit'
+      'AMT_ANNUITY': 'amt_annuity'
+      'AMT_GOODS_PRICE': 'amt_goods_price'
+      'NAME_INCOME_TYPE': 'income_type'
+      'NAME_EDUCATION_TYPE': 'edu_type'
+      'NAME_FAMILY_STATUS': 'family_status'
+      'DAYS_BIRTH': 'days_birth'
+      'DAYS_EMPLOYED': 'days_employed'
+      'DAYS_ID_PUBLISH': 'days_id_change'
+      'FLAG_CONT_MOBILE': 'phone_contactable'
+      'CNT_FAM_MEMBERS': 'cnt_family_members'
+      'AMT_REQ_CREDIT_BUREAU_DAY': 'amt_req_credit_bureau_day'
+  clean:
+    filna_col: amt_req_credit_bureau_day
+    clean_col: edu_type
+    clean_replace_dict:
+      'Secondary / secondary special': 'Secondary education'
+      'Lower secondary': 'Secondary education'
+      'Academic degree': 'Higher education'
+    to_str_col: phone_contactable
+    neg_cols:
+      - days_birth
+      - days_employed
+      - days_id_change
+    cat_dict:
+      'own_car': {"Y": "Yes", "N": "No"}
+      'own_realty': {"Y": "Yes", "N": "No"}
+      'phone_contactable': {"1": "Yes", "0": "No"}
+      'gender': {"M": "Male", "F": "Female", "XNA": "Not Provided"}
+features:
+  featurize:
+    dty_cols_dict:
+      'Age': 'days_birth'
+      'Years_Employed': 'days_employed'
+      'Years_ID_Publish': 'days_id_change'
+    old_col: days_employed
+    new_col: Employed
+  get_ohe_data:
+    cat_vars:
+      - contract_type
+      - gender
+      - own_car
+      - own_realty
+      - income_type
+      - edu_type
+      - family_status
+      - phone_contactable
+      - Employed
+    num_vars:
+      - num_children
+      - income_total
+      - amt_credit
+      - amt_annuity
+      - amt_goods_price
+      - Age
+      - Years_Employed
+      - Years_ID_Publish
+      - cnt_family_members
+      - amt_req_credit_bureau_day
+    target_col: target
+model:
+  train_model:
+    target_colname: target
+    sample_strat: 0.5
+    ts: 0.4
+    n_estimat: 10
+    max_dep: 10
+    rand_state: 0
+predict:
+  transform_input:
+    cat_cols:
+      - contract_type
+      - gender
+      - own_car
+      - own_realty
+      - income_type
+      - edu_type
+      - family_status
+      - phone_contactable
+      - Employed
+    ohe_cols:
+      - 'num_children'
+      - 'income_total'
+      - 'amt_credit'
+      - 'amt_annuity'
+      - 'amt_goods_price'
+      - 'Age'
+      - 'Years_Employed'
+      - 'Years_ID_Publish'
+      - 'cnt_family_members'
+      - 'amt_req_credit_bureau_day'
+      - 'contract_type_Revolving loans'
+      - 'gender_Male'
+      - 'gender_Not Provided'
+      - 'own_car_Yes'
+      - 'own_realty_Yes'
+      - 'income_type_Commercial associate'
+      - 'income_type_Maternity leave'
+      - 'income_type_Pensioner'
+      - 'income_type_State servant'
+      - 'income_type_Student'
+      - 'income_type_Unemployed'
+      - 'income_type_Working'
+      - 'edu_type_Incomplete higher'
+      - 'edu_type_Secondary education'
+      - 'family_status_Married'
+      - 'family_status_Separated'
+      - 'family_status_Single / not married'
+      - 'family_status_Widow'
+      - 'phone_contactable_Yes'
+      - 'Employed_Yes'
+  get_prediction:
+     model_path: models/randomforest.joblib
+     ohe_cols:
+      - 'num_children'
+      - 'income_total'
+      - 'amt_credit'
+      - 'amt_annuity'
+      - 'amt_goods_price'
+      - 'Age'
+      - 'Years_Employed'
+      - 'Years_ID_Publish'
+      - 'cnt_family_members'
+      - 'amt_req_credit_bureau_day'
+      - 'contract_type_Revolving loans'
+      - 'gender_Male'
+      - 'gender_Not Provided'
+      - 'own_car_Yes'
+      - 'own_realty_Yes'
+      - 'income_type_Commercial associate'
+      - 'income_type_Maternity leave'
+      - 'income_type_Pensioner'
+      - 'income_type_State servant'
+      - 'income_type_Student'
+      - 'income_type_Unemployed'
+      - 'income_type_Working'
+      - 'edu_type_Incomplete higher'
+      - 'edu_type_Secondary education'
+      - 'family_status_Married'
+      - 'family_status_Separated'
+      - 'family_status_Single / not married'
+      - 'family_status_Widow'
+      - 'phone_contactable_Yes'
+      - 'Employed_Yes'
