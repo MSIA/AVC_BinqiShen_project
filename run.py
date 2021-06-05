@@ -1,6 +1,7 @@
 import argparse
 import logging.config
 import pkg_resources
+import os
 
 import yaml
 import joblib
@@ -75,6 +76,8 @@ if __name__ == '__main__':
     sb_acquire.add_argument('--local_path', default='data/sample/application_data.csv',
                             help="local path to the data")
 
+    sb_test = subparsers.add_parser("test", description="run unit tests")
+
     args = parser.parse_args()
     sp_used = args.subparser_name
 
@@ -120,5 +123,7 @@ if __name__ == '__main__':
         # save the trained model
         joblib.dump(rf_mod, conf['predict']['get_prediction']['model_path'])
         logger.info("Trained model save to location: %s", conf['predict']['get_prediction']['model_path'])
+    elif sp_used == 'test':
+        os.system('pytest')
     else:
         parser.print_help()

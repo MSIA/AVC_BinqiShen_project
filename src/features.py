@@ -1,6 +1,7 @@
 import logging
 
 import pandas as pd
+import numpy as np
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +20,7 @@ def day_to_year(df, new_cols_dict):
 
     """
     for key, value in new_cols_dict.items():
-        df.loc[:, key] = df[value].apply(lambda x: x/365)
+        df.loc[:, key] = df[value].apply(lambda x: np.round(x/365))
         logger.info('New column %s created based on original column %s', key, value)
     return df
 
