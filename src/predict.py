@@ -29,7 +29,7 @@ def transform_input(ui_dict, cat_cols, ohe_cols):
 
     # change value to 1 to simulate one-hot encoded result
     for col in input_df.columns:
-        if str.isdigit(input_df[col].values[0]):
+        if str.isdigit(str(input_df[col].values[0])):
             pass
         else:
             input_df[col] = 1
