@@ -133,6 +133,7 @@ def about():
         rendered html template located at: app/templates/about.html
 
     """
+    logger.debug("About page accessed")
     return render_template('about.html')
 
 
