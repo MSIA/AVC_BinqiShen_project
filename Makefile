@@ -1,5 +1,5 @@
 image:
-	docker build -f app/Dockerfile -t application_data .
+	docker build -f Dockerfile -t application_data .
 
 upload_file_to_s3:
 	docker run -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY application_data run.py upload_file_to_s3

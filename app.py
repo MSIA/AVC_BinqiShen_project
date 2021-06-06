@@ -42,9 +42,8 @@ def index():
     """
 
     try:
-        applications = application_manager.session.query(Application).limit(app.config["MAX_ROWS_SHOW"]).all()
         logger.debug("Index page accessed")
-        return render_template('index.html', applications=applications, contract_type=CONTRACT_TYPE,
+        return render_template('index.html', contract_type=CONTRACT_TYPE,
                                genders=GENDERS, own_car=BINARY, own_realty=BINARY,
                                income_type=INCOME_TYPE, edu_type=EDU_TYPE, fam_status=FAM_STATUS,
                                phone_contact=BINARY, employed=BINARY)
