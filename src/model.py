@@ -62,10 +62,12 @@ def evaluate(rf_model, X_test, y_test):
         None
 
     """
+    # predict probability and class for each sample in the test set
     x_names = X_test.columns
     ypred_proba_test = rf_model.predict_proba(X_test[x_names])[:, 1]
     ypred_bin_test = rf_model.predict(X_test[x_names])
 
+    # calculate metrics
     auc = sklearn.metrics.roc_auc_score(y_test, ypred_proba_test)
     confusion = sklearn.metrics.confusion_matrix(y_test, ypred_bin_test)
     accuracy = sklearn.metrics.accuracy_score(y_test, ypred_bin_test)
