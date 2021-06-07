@@ -6,7 +6,7 @@ from flask import Flask
 from flask import render_template, request
 
 from config.flaskconfig import CONTRACT_TYPE, GENDERS, BINARY, INCOME_TYPE, EDU_TYPE, FAM_STATUS
-from src.add_application import Application, ApplicationManager
+from src.add_application import ApplicationManager
 from src.predict import transform_input, get_prediction
 
 # Initialize the Flask application
