@@ -15,14 +15,19 @@ QA support: Yijun Wu
 - [Directory structure](#directory-structure)
 - [Running the app](#running-the-app)
   * [1. Build the Docker Image](#1-build-the-docker-image)
-  * [2. Load data into S3](#2-load-data-into-s3)
+  * [2. Load data into S3 and Download data from S3](#2-load-data-into-s3-and-download-data-from-s3)
     + [AWS Credentials Configuration](#aws-credentials-configuration)
     + [Load data into S3](#load-data-into-s3)
+    + [Download data from S3](#download-data-from-s3)
   * [3. Initialize the database](#3-initialize-the-database)
     + [Create the Database Locally](#create-the-database-locally)
     + [Configure Environment Variables](#configure-environment-variables)
     + [Create the Database on RDS](#create-the-database-on-rds)
     + [Test Connection to Database](#test-connection-to-database)
+  * [4. Model Pipeline](#4-model-pipeline)
+  * [5. Running the Flask App](#5-running-the-flask-app)
+  * [6. Testing](6-testing)
+
     
 <!-- tocstop -->
 
@@ -60,7 +65,7 @@ A typical user of the app will be asked to answer a series of questions regardin
 │   ├── static/                       <- CSS, JS files that remain static
 │   ├── templates/                    <- HTML (or other code) that is templated and changes based on a set of inputs
 │   ├── boot.sh                       <- Start up script for launching app in Docker container.
-│   ├── Dockerfile                    <- Dockerfile for building image to run app  
+│   ├── Dockerfile                    <- Dockerfile for building image to acquire data, land data in s3, create table in RDS, and run model pipeline
 │
 ├── config                            <- Directory for configuration files 
 │   ├── local/                        <- Directory for keeping environment variables and other local configurations that *do not sync** to Github 
@@ -88,11 +93,21 @@ A typical user of the app will be asked to answer a series of questions regardin
 ├── reference/                        <- Any reference material relevant to the project
 │
 ├── src/                              <- Source data for the project 
+│   ├──acquire.py                     <- Python script that acquires and cleans data
 │   ├──add_application.py             <- Python script that defines the data model for my table in RDS
+│   ├──features.py                    <- Python script that generate new features from data
+│   ├──model.py                       <- Python script that trains and evaluate a model (Random Forest Classifier)
+│   ├──predict.py                     <- Python script that makes prediction for new user input
 │   ├──s3.py                          <- Python script that connects to S3
 │
 ├── test/                             <- Files necessary for running model tests (see documentation below) 
+│   ├──test_acquire.py                <- Python script that tests the functions in acquire.py
+│   ├──test_features.py               <- Python script that tests the functions in features.py
+│   ├──test_predict.py                <- Python script that tests the functions in predict.py
+│   ├──test_s3.py                     <- Python script that tests the functions in s3.py
 │
+├── Dockerfile                        <- Dockerfile for running the app
+├── Makefile                          <- Makefile that contains shortcuts to terminal commands
 ├── app.py                            <- Flask wrapper for running the model 
 ├── run.py                            <- Simplifies the execution of one or more of the src scripts  
 ├── requirements.txt                  <- Python package dependencies 
@@ -100,16 +115,18 @@ A typical user of the app will be asked to answer a series of questions regardin
 
 ## Running the app
 
-*Note: Please be sure to be connected to the Northwestern VPN and go to the root directory of the repository before you move forward with the following steps.*
+*Note: Please be sure to be **connected to the Northwestern VPN** and go to the **root directory** of the repository before you move forward with the following steps.*
 
 
 ### 1. Build the Docker Image 
 *Note: Please be sure your Docker Desktop is open before you move forward with the following steps*
 
-`docker build -f app/Dockerfile -t application_data .`
+In order to acquire data, land data into S3, download data from S3, create table in RDS, and run the model pipeline, please run one of the following commands to build the docker image.
+- Method 1: `make image`
+- Method 2: `docker build -f Dockerfile -t application_data .`
+ 
 
-
-### 2. Load data into S3
+### 2. Load data into S3 and Download data from S3
 
 #### AWS Credentials Configuration
 To configure AWS credentials, run the following commands in terminal to load your credentials as environment variables: 
@@ -121,7 +138,7 @@ To configure AWS credentials, run the following commands in terminal to load you
 
 
 #### Load data into S3
-The data used for this project was obtained from this [Credit Card Fraud Detection](https://www.kaggle.com/mishra5001/credit-card) Kaggle dataset. Since the data i relatively small, there is a copy of the loan application data in this repository with the following path: `data/sample/application_data.csv`. 
+The data used for this project was obtained from this [Credit Card Fraud Detection](https://www.kaggle.com/mishra5001/credit-card) Kaggle dataset. Since the data is relatively small, there is a copy of the loan application data in this repository with the following path: `data/sample/application_data.csv`. 
 
 Run the following command to load data to S3: 
 
@@ -139,6 +156,26 @@ Without specifying `--local_path` and `s3_path`, the default local path is: `dat
 If you want to upload data from a different local path, specify by adding the following: `--local_path <local_file_path>`
 
 If you want to upload data to a different S3 path, specify by adding the following: `--s3_path <s3_file_path>`
+
+#### Download data from S3
+If you would like to download the datase used for this project from S3, please run the following commands: 
+
+```
+docker run \
+    --mount type=bind,source="$(shell pwd)",target=/app/ \
+    -e AWS_ACCESS_KEY_ID \
+    -e AWS_SECRET_ACCESS_KEY \
+    application_data run.py download_file_from_s3 \
+    --local_path <local_file_path> \                  
+    --s3_path <s3_file_path> 
+```
+
+Without specifying `--local_path` and `s3_path`, the default local path is: `data/sample/application_data.csv` and the default s3 path is: `s3://2021-msia423-shen-binqi/raw/application_data.csv`. 
+
+If you want to upload data from a different local path, specify by adding the following: `--local_path <local_file_path>`
+
+If you want to upload data to a different S3 path, specify by adding the following: `--s3_path <s3_file_path>`
+
 
 ### 3. Initialize the database 
 
@@ -181,7 +218,13 @@ Type the following command in your terminal to update the .mysqlconfig file: `so
 
 #### Create the Database on RDS
 
-To create the database on RDS, run the following command in your terminal: 
+To initialize an empty database on RDS, run one of the following commands in your terminal: 
+
+- Method 1: 
+ 
+`make create_db_rds`
+
+- Method 2: 
 
 ```
 docker run -it \
@@ -190,13 +233,20 @@ docker run -it \
     -e MYSQL_USER \
     -e MYSQL_PASSWORD \
     -e DATABASE_NAME \
-    application run.py create_db
+    application_data run.py create_db
 ```
+
+Please note that if you choose to initialize an empty database on RDS, you would not be able to see the previous records that are already in the database. 
 
 #### Test Connection to Database 
 
-To test if you can connect to the database, run the following command: 
+To test if you can connect to the database, run one of the following commands: 
 
+- Method 1:
+
+`make connect_db`
+
+- Method 2:
 ```
 docker run -it --rm \
     mysql:5.7.33 \
@@ -214,5 +264,50 @@ If successfully connected, you may run the following commands:
 - You may check the columns within a table by running: `show columns from <table_name>;`
 
 
+### 4. Model Pipeline
+
+A Random Forest Classifier was built to make predictions on loan delinquency for new applicants. The pretrained model is located in this repository with the following path: `models/randomforest.joblib`. 
+
+If you wish to re-run the model pipeline, please run one of the following commands: 
+
+- Method 1: 
+ 
+`make model`
+
+- Method 2: 
+
+```
+docker run --mount type=bind,source="$(shell pwd)",target=/app/ -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY application_data run.py run_model_pipeline
+```
+
+The resulting model would be stored in the following location: `models/randomforest.joblib`. 
 
 
+### 5. Running the Flask App
+
+To run the Flask app, run: 
+
+`python app.py`
+
+If you wish to run the Flask App in Docker, you need to first build docker image by running: 
+
+`docker build -f app/Dockerfile -t application_data .`
+
+Then you can run the following command to run this app using the following command: 
+`docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e MYSQL_HOST -e MYSQL_PORT -e MYSQL_USER -e MYSQL_PASSWORD -e DATABASE_NAME -p 5000:5000 application_data app.py`
+
+You should now be able to access the app at http://0.0.0.0:5000/ in your browser.
+
+
+### 6. Testing
+
+Unit test is run for src/acquire.py, src/features.py, src/predict.py, and src/s3.py. One "happy path" and one "unhappy path" per function would tested. 
+
+- From within the Docker container, the following command should work to run unit tests when run from the root of the repository:
+
+  - `python -m pytest`
+
+- If you wish to run the unit tests using docker, please be sure that you have built the image by running either `make image` or `docker build -f Dockerfile -t application_data .` from the root of this repository. Then, run one of the following commands: 
+
+  - `make test`
+  - `docker run -it application_data run.py test`
