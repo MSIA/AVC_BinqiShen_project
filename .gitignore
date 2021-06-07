@@ -14,6 +14,9 @@ env/
 venv/
 .mypy_cache/
 
+# app
+copilot
+
 # data
 !data/sample/
 !data/external/

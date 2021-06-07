@@ -4,19 +4,7 @@ import re
 import boto3
 import botocore
 
-logging.basicConfig(format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s', level=logging.DEBUG)
-
-# specify logging level for the following loggers
-logging.getLogger("aiobotocore").setLevel(logging.ERROR)
-logging.getLogger("asyncio").setLevel(logging.ERROR)
-logging.getLogger("boto3").setLevel(logging.ERROR)
-logging.getLogger("botocore").setLevel(logging.ERROR)
-logging.getLogger("s3transfer").setLevel(logging.ERROR)
-logging.getLogger("s3fs").setLevel(logging.ERROR)
-logging.getLogger("urllib3").setLevel(logging.ERROR)
-
-
-logger = logging.getLogger('s3')
+logger = logging.getLogger(__name__)
 
 
 def parse_s3(s3_path):

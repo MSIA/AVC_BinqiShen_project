@@ -21,7 +21,7 @@ def transform_input(ui_dict, cat_cols, ohe_cols):
     """
     # transform the user input into a pandas DataFrame
     input_df = pd.DataFrame(ui_dict, index=[0])
-    logger.debug('Initial Input column names: ', input_df.columns)
+    logger.debug('Initial Input column names: %s', input_df.columns)
 
     # change column names to match the one-hot-encoded column names
     for col in cat_cols:
@@ -37,7 +37,7 @@ def transform_input(ui_dict, cat_cols, ohe_cols):
     # create an empty DataFrame with the required columns in the model
     ohe_empty = pd.DataFrame(columns=ohe_cols)
     input_new = ohe_empty.T.join(input_df.T).fillna(0).T
-    logger.debug('Column names after all transformation steps: ', input_new.columns)
+    logger.debug('Column names after all transformation steps: %s', input_new.columns)
     return input_new
 
 

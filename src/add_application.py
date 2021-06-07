@@ -143,4 +143,4 @@ class ApplicationManager:
                                 Employed=employed)
         session.add(applicant)
         session.commit()
-        logger.info("Customer # %s added to database", id)
+        logger.info("A new customer added to the database")
