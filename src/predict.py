@@ -54,8 +54,11 @@ def get_prediction(input_ohe, model_path, ohe_cols):
         delinquency where the second object in the list is the predicted class for the applicant
 
     """
+    # load pre-trained model
     loaded_rf = joblib.load(model_path)
+    # predict probability of loan_delinquency with the new user input
     pred_prob = np.round(100 * loaded_rf.predict_proba(input_ohe[ohe_cols])[:, 1][0], 2)
+    # predict the class with the new user input
     if loaded_rf.predict(input_ohe[ohe_cols]) == 1:
         pred_bin = "the applicant IS LIKELY to have delinquent payment"
     else:

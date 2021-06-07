@@ -68,7 +68,7 @@ if __name__ == '__main__':
     sb_ingest.add_argument("--engine_string", default='sqlite:///data/application.db',
                            help="SQLAlchemy Connection URI for database")
 
-    # Sub-parser for acquiring data
+    # Sub-parser for acquiring, cleaning, and running model pipeline
     sb_acquire = subparsers.add_parser("run_model_pipeline",
                                        description="Acquire data, clean data, featurize data, and run model-pipeline")
     sb_acquire.add_argument('--s3_path', default='s3://2021-msia423-shen-binqi/raw/application_data.csv',
