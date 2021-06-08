@@ -1,5 +1,6 @@
 acquire:
   import_data:
+    path: data/sample/application_data.csv
     colnames_dict:
       'SK_ID_CURR': 'id'
       'TARGET': 'target'
@@ -78,7 +79,7 @@ model:
     max_dep: 10
     rand_state: 0
   evaluate:
-    save_path: data/evaluation_result.csv
+    save_path: data/artifacts/evaluation_result.csv
 predict:
   transform_input:
     cat_cols:

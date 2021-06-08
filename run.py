@@ -5,6 +5,7 @@ import os
 
 import yaml
 import joblib
+import pandas as pd
 
 from src.add_application import ApplicationManager, create_db
 from src.s3 import upload_file_to_s3, download_file_from_s3
@@ -69,14 +70,13 @@ if __name__ == '__main__':
                            help="SQLAlchemy Connection URI for database")
 
     # Sub-parser for acquiring, cleaning, and running model pipeline
-    sb_acquire = subparsers.add_parser("run_model_pipeline",
-                                       description="Acquire data, clean data, featurize data, and run model-pipeline")
-    sb_acquire.add_argument('--s3_path', default='s3://2021-msia423-shen-binqi/raw/application_data.csv',
-                            help="S3 data path to the data")
-    sb_acquire.add_argument('--local_path', default='data/sample/application_data.csv',
-                            help="local path to the data")
-
-    sb_test = subparsers.add_parser("test", description="run unit tests")
+    sb_pipeline = subparsers.add_parser("run_model_pipeline",
+                                        description="Acquire data, clean data, featurize data, and run model-pipeline")
+    sb_pipeline.add_argument('--step', help="Which step to run",
+                             choices=['clean', 'featurize', 'model', 'test'])
+    sb_pipeline.add_argument('--input', '-i', default=None, help='Path to input data (optional, default = None)')
+    sb_pipeline.add_argument('--config', default='config/config.yaml', help='Path to configuration file')
+    sb_pipeline.add_argument('--output', '-o', default=None, help='Path to save output (optional, default = None)')
 
     args = parser.parse_args()
     sp_used = args.subparser_name
@@ -106,24 +106,38 @@ if __name__ == '__main__':
             conf = yaml.load(f, Loader=yaml.FullLoader)
         logger.info("Configuration file loaded from %s" % args.config)
 
-        # download raw data from s3
-        download_file_from_s3(args.local_path, args.s3_path)
+        if args.input is not None:
+            input = pd.read_csv(args.input)
+            logger.info("Input data loaded from %s", args.input)
 
-        # model pipeline: clean -> featurize -> one-hot-encode -> model -> evaluation
-        raw = import_data(args.local_path, **conf['acquire']['import_data'])
-        cleaned = clean(raw, **conf['acquire']['clean'])
-        featurized = featurize(cleaned, **conf['features']['featurize'])
-        ohe_data = get_ohe_data(featurized, **conf['features']['get_ohe_data'])
-        model_result = train_model(ohe_data, **conf['model']['train_model'])
-        rf_mod = model_result[0]
-        X_test = model_result[1]
-        y_test = model_result[2]
-        evaluate_result = evaluate(rf_mod, X_test, y_test, **conf['model']['evaluate'])
+        if args.step == 'clean':
+            # import raw data and clean data
+            raw = import_data(**conf['acquire']['import_data'])
+            output = clean(raw, **conf['acquire']['clean'])
+        elif args.step == 'featurize':
+            # generate new features from cleaned data and one-hot encode
+            featurized = featurize(input, **conf['features']['featurize'])
+            output = get_ohe_data(featurized, **conf['features']['get_ohe_data'])
+        elif args.step == 'model':
+            # train model & evaluate results
+            model_result = train_model(input, **conf['model']['train_model'])
+            output = model_result[0]
+            X_test = model_result[1]
+            y_test = model_result[2]
+            # evaluate the model result
+            evaluate(output, X_test, y_test, **conf['model']['evaluate'])
+        elif args.step == 'test':
+            os.system('pytest')
 
-        # save the trained model
-        joblib.dump(rf_mod, conf['predict']['get_prediction']['model_path'])
-        logger.info("Trained model save to location: %s", conf['predict']['get_prediction']['model_path'])
-    elif sp_used == 'test':
-        os.system('pytest')
+        if args.output is not None:
+            if args.step != "model":
+                # save intermediate artifacts in the model pipeline
+                output.to_csv(args.output, index=False)
+                logger.info("Output saved to %s", args.output)
+            else:
+                # save the trained model
+                joblib.dump(output, args.output)
+                logger.info("Trained model object saved to %s", args.output)
+
     else:
         parser.print_help()
