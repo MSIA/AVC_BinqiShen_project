@@ -4,55 +4,193 @@
     <meta charset="UTF-8">
     <link href="static/basic.css" rel="stylesheet">
 
+    <style>
+      h1 {
+        text-align: center;
+        color: #424242;
+      }
+      h3 {
+        text-align: center;
+        color: #424242;
+      }
+      h4 {
+        color: #424242;
+      }
+
+      label {
+        text-align: justify;
+        text-justify: inter-word;
+        color: #424242;
+      }
+      input {
+        text-align: justify;
+        text-justify: inter-word;
+        color: #424242;
+      }
+      div {
+        text-align: center;
+      }
+      body {
+        background-color: #F2F2F2
+      }
+
+    </style>
+
     <title>Main Menu for Loan Application</title>
+
 </head>
 
 <body>
+    <h1>
+         Avoiding Delinquency in Loan Payments
+    </h1>
+
     <h3>
-         <a href = "{{ url_for('index') }}">Loan Payment Delinquency Prediction</a>
+        Predict the Payment Delinquency Risk for the Next Loan Applicant
     </h3>
-    <a href="{{ url_for('about') }}">Read More About This Loan Application</a>
 
-    <hr/>
-    <table>
-         <thead>
-            <tr>
-               <th>Title</th>
-               <th>Artist</th>
-               <th>Album</th>
-            </tr>
-         </thead>
+    <div>
+        <a href="{{ url_for('about') }}">Read More About This Loan Application</a>
+    </div>
+    <br/>
 
-         <tbody>
-            {% for track in tracks %}
-               <tr>
-                   <td>{{ track.title }}</td>
-                   <td>{{ track.artist }}</td>
-                   <td>{{ track.album }}</td>
-               </tr>
-            {% endfor %}
-         </tbody>
-      </table>
+    <img src="https://nextviewloans.com/wp-content/uploads/2017/09/loan-1.jpg" alt="Image" width="1130", height="600", align="justify"></img>
+
+    <h4>
+        Please enter the loan applicant information below to GET PREDICTION RESULTS:
+    </h4>
+
       <form action="{{ url_for('add_entry') }}" method=post class=add-entry>
       <dl>
-        <input type=text size=15 name=title placeholder="Title">
-        <input type=text size=15 name=artist placeholder="Artist">
-        <input type=text size=15 name=album placeholder="Album">
 
-        <br />
-          {% for gender in genders %}
-          <input type="radio" id="{{ gender.lower() }}" name="gender" value="{{ gender.lower() }}"/>
-          <label for="{{ gender.lower() }}">{{ gender }}</label>
+          <label>1. Choose a contract type: </label>
+          {% for contract in contract_type %}
+          <input type="radio" id="{{ contract }}" name="contract_type" value="{{ contract }}"/>
+          <label for="{{ contract }}">{{ contract }}</label>
           {% endfor %}
         <br />
 
-        <label for="contract_type">Choose a Contract Type: </label>
-        <select name="contract_type" id="contract_type">
-            <option value="">Cash Loans</option>
-            <option value="">Revolving Loans</option>
-        </select>
+        <br />
+          <label>2. Gender: </label>
+          {% for gender in genders %}
+          <input type="radio" id="{{ gender }}" name="gender" value="{{ gender }}"/>
+          <label for="{{ gender }}">{{ gender }}</label>
+          {% endfor %}
+        <br />
 
-        <input type=submit value=Add>
+        <br />
+          <label for="age">3. Age:</label>
+          <input type="number" id="age" name="age">
+        <br />
+
+        <br />
+          <label>4. Does he/she own any cars? </label>
+          {% for car in own_car %}
+          <input type="radio" id="{{ car }}" name="own_car" value="{{ car }}"/>
+          <label for="{{ car }}">{{ car }}</label>
+          {% endfor %}
+        <br />
+
+        <br />
+          <label>5. Does he/she own any realty? </label>
+          {% for realty in own_realty %}
+          <input type="radio" id="{{ realty }}" name="own_realty" value="{{ realty }}"/>
+          <label for="{{ realty }}">{{ realty }}</label>
+          {% endfor %}
+        <br />
+
+        <br />
+          <label for="num_children">6. Number of children:</label>
+          <input type="number" id="num_children" name="num_children" min="0">
+        <br />
+
+        <br />
+          <label for="tot_income">7. Total income per year ($):</label>
+          <input type="number" id="tot_income" name="income_total" min="0">
+        <br />
+
+        <br />
+          <label for="credit">8. Credit amount of the loan:</label>
+          <input type="number" id="credit" name="amt_credit" min="0">
+        <br />
+
+        <br />
+          <label for="annuity">9. Loan annuity amount:</label>
+          <input type="number" id="annuity" name="amt_annuity" min="0">
+        <br />
+
+        <br />
+          <label for="price_good">10. Price of the goods for which the loan is given:</label>
+          <input type="number" id="price_good" name="amt_goods_price" min="0">
+        <br />
+
+        <br />
+          <label for="income_type">11. Applicant's income type: </label>
+          <select name="income_type" id="income_type">
+              {% for income in income_type %}
+              <option value="{{ income }}">{{ income }}</option>
+              {% endfor %}
+          </select>
+        <br />
+
+        <br />
+          <label for="edu_type">12. Applicant's highest level of education: </label>
+          <select name="edu_type" id="edu_type">
+              {% for edu in edu_type %}
+              <option value="{{ edu }}">{{ edu }}</option>
+              {% endfor %}
+          </select>
+        <br />
+
+        <br />
+          <label for="fam_status">13. Applicant's family status: </label>
+          <select name="family_status" id="fam_status">
+              {% for fam in fam_status %}
+              <option value="{{ fam }}">{{ fam }}</option>
+              {% endfor %}
+          </select>
+        <br />
+
+        <br />
+          <label for="employed">14. Number of years before the application the person started current employment:</label>
+          <input type="number" id="employed" name="years_employed">
+        <br />
+
+        <br />
+          <label for="years_id_publish">15. Number of years before the application did client change the identity document:</label>
+          <input type="number" id="years_id_publish" name="years_id_publish" min="0">
+        <br />
+
+        <br />
+          <label>16. Is the phone provided by the applicant reachable? </label>
+          {% for phone in phone_contact %}
+          <input type="radio" id="{{ phone }}" name="phone_contactable" value="{{ phone }}"/>
+          <label for="{{ phone }}">{{ phone }}</label>
+          {% endfor %}
+        <br />
+
+        <br />
+          <label for="num_family_members">17. How many family members does the applicant have? </label>
+          <input type="number" id="num_family_members" name="cnt_family_members" min="0">
+        <br />
+
+        <br />
+          <label for="num_credit_bureau">18. Number of enquiries to Credit Bureau that is about the applicant (one day before application): </label>
+          <input type="number" id="num_credit_bureau" name="amt_req_credit_bureau_day" min="0">
+        <br />
+
+        <br />
+          <label>19. Is the applicant employed? </label>
+          {% for emp in employed %}
+          <input type="radio" id="{{ emp }}" name="employed" value="{{ emp }}"/>
+          <label for="{{ emp }}">{{ emp }}</label>
+          {% endfor %}
+        <br />
+
+        <br />
+
+        <input type=submit value="Save Applicant Information & Get Prediction!">
+
       </dl>
     </form>
 

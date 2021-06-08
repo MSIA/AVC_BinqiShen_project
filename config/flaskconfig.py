@@ -25,3 +25,12 @@ else:
     SQLALCHEMY_DATABASE_URI = '{dialect}://{user}:{pw}@{host}:{port}/{db}'.format(dialect=DB_DIALECT, user=DB_USER,
                                                                                   pw=DB_PW, host=DB_HOST, port=DB_PORT,
                                                                                   db=DATABASE)
+
+# Categorical questions used in the app
+CONTRACT_TYPE = ['Cash loans', 'Revolving loans']
+GENDERS = ['Male', 'Female', 'Not Provided']
+BINARY = ['Yes', 'No']
+INCOME_TYPE = ['Working', 'State servant', 'Commercial associate', 'Pensioner',
+               'Unemployed', 'Student', 'Businessman', 'Maternity leave']
+EDU_TYPE = ['Secondary education', 'Incomplete higher', 'Higher education']
+FAM_STATUS = ['Single / not married', 'Married', 'Civil marriage', 'Widow', 'Separated']
