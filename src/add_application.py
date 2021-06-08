@@ -51,10 +51,14 @@ def create_db(engine_string: str):
         None
 
     """
-    engine = sqlalchemy.create_engine(engine_string)
-
-    Base.metadata.create_all(engine)
-    logger.info("Database created.")
+    try:
+        engine = sqlalchemy.create_engine(engine_string)
+        Base.metadata.create_all(engine)
+        logger.info("Database created at %s", engine_string)
+    except sqlalchemy.exc.ArgumentError:
+        logger.error('%s is not a valid engine string', engine_string)
+    except sqlalchemy.exc.OperationalError:
+        logger.error('Failed to connect to server. Please check if you are connected to Northwestern VPN')
 
 
 class ApplicationManager:
@@ -121,26 +125,29 @@ class ApplicationManager:
             None
 
         """
-        session = self.session
-        applicant = Application(contract_type=contract_type,
-                                gender=gender,
-                                own_car=own_car,
-                                own_realty=own_realty,
-                                num_children=num_children,
-                                income_total=income_total,
-                                amt_credit=amt_credit,
-                                amt_annuity=amt_annuity,
-                                amt_goods_price=amt_goods_price,
-                                income_type=income_type,
-                                edu_type=edu_type,
-                                family_status=family_status,
-                                Age=age,
-                                Years_Employed=years_employed,
-                                Years_ID_Publish=years_id_publish,
-                                phone_contactable=phone_contactable,
-                                cnt_family_members=cnt_family_members,
-                                amt_req_credit_bureau_day=amt_req_credit_bureau_day,
-                                Employed=employed)
-        session.add(applicant)
-        session.commit()
-        logger.info("A new customer added to the database")
+        try:
+            session = self.session
+            applicant = Application(contract_type=contract_type,
+                                    gender=gender,
+                                    own_car=own_car,
+                                    own_realty=own_realty,
+                                    num_children=num_children,
+                                    income_total=income_total,
+                                    amt_credit=amt_credit,
+                                    amt_annuity=amt_annuity,
+                                    amt_goods_price=amt_goods_price,
+                                    income_type=income_type,
+                                    edu_type=edu_type,
+                                    family_status=family_status,
+                                    Age=age,
+                                    Years_Employed=years_employed,
+                                    Years_ID_Publish=years_id_publish,
+                                    phone_contactable=phone_contactable,
+                                    cnt_family_members=cnt_family_members,
+                                    amt_req_credit_bureau_day=amt_req_credit_bureau_day,
+                                    Employed=employed)
+            session.add(applicant)
+            session.commit()
+            logger.info("A new customer added to the database")
+        except sqlalchemy.exc.OperationalError:
+            logger.error('Failed to connect to server. Please check if you are connected to Northwestern VPN')
