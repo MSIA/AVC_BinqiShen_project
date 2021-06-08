@@ -32,20 +32,20 @@ QA support: Yijun Wu
   * [6. Testing](6-testing)
 - [Build the App Using Docker](#build-the-app-using-docker)
   * [1. Build the First Docker Image](#1-build-the-first-docker-image)
-  * [2. Load data into S3 and Download data from S3](#2-load-data-into-s3-and-download-data-from-s3)
-    + [AWS Credentials Configuration](#aws-credentials-configuration)
-    + [Load data into S3](#load-data-into-s3)
-    + [Download data from S3](#download-data-from-s3)
-  * [3. Initialize the database](#3-initialize-the-database)
-    + [Option 1: Create the Database Locally](#option-1-create-the-database-locally)
-    + [Option 2: Create the Database on RDS](#option-2-create-the-database-on-rds)
-      * [Step 1: Configure Environment Variables ](#step-1-configure-environment-variables)
-      * [Step 2: Create the Database on RDS](#step-2-create-the-database-on-rds)
-      * [Test Connection to Database](#test-connection-to-database)
-  * [4. Model Pipeline](#4-model-pipeline)
-  * [5. Running the App](#5-running-the-app)
+  * [2. Load data into S3 and Download data from S3 - Docker](#2-load-data-into-s3-and-download-data-from-s3---docker)
+    + [AWS Credentials Configuration - Docker](#aws-credentials-configuration---docker)
+    + [Load data into S3 - Docker](#load-data-into-s3---docker)
+    + [Download data from S3 - Docker](#download-data-from-s3---docker)
+  * [3. Initialize the database - Docker](#3-initialize-the-database---docker)
+    + [Option 1: Create the Database Locally - Docker](#option-1-create-the-database-locally---docker)
+    + [Option 2: Create the Database on RDS - Docker](#option-2-create-the-database-on-rds---docker)
+      * [Step 1: Configure Environment Variables - Docker](#step-1-configure-environment-variables---docker)
+      * [Step 2: Create the Database on RDS - Docker](#step-2-create-the-database-on-rds---docker)
+      * [Test Connection to Database - Docker](#test-connection-to-database---docker)
+  * [4. Model Pipeline - Docker](#4-model-pipeline---docker)
+  * [5. Running the App - Docker](#5-running-the-app---docker)
       * [Step 1: Build a Second Docker Image](#step-1-build-a-second-docker-image)
-  * [6. Testing](#6-testing)
+  * [6. Testing - Docker](#6-testing---docker)
 
     
 <!-- tocstop -->
@@ -92,8 +92,9 @@ A typical user of the app will be asked to answer a series of questions regardin
 │   ├── flaskconfig.py                <- Configurations for Flask API 
 │
 ├── data                              <- Folder that contains data used or generated. Only the external/ and sample/ subdirectories are tracked by git. 
+│   ├── artifacts/                    <- Intermediate artifacts from model pipeline
 │   ├── external/                     <- External data sources, usually reference data,  will be synced with git
-│   ├── sample/                       <- Sample data used for code development and testing, will be synced with git
+│   ├── sample/                       <- raw data used for code development and testing, will be synced with git
 │
 ├── deliverables/                     <- Any white papers, presentations, final work products that are presented or delivered to a stakeholder 
 │
@@ -252,15 +253,31 @@ If successfully connected, you may run the following commands:
 
 In this model pipeline, we will download data from S3, clean data, generate new features, one hot encode the categorical columns, and finally train a Random Forest Classifier as well as output the evaluation results.
 
-A Random Forest Classifier was the model built to make predictions on loan delinquency for new applicants. The pre-trained model is located in this repository with the following path: `models/randomforest.joblib`. 
+A Random Forest Classifier was the model built to make predictions on loan delinquency for new applicants. The pre-trained model is located in this repository with the following path: `models/randomforest.joblib`. The intermediate artifacts and the model evaluation results are stored in the `data/artifacts` folder. 
 
-If you wish to re-run the model pipeline, please run the following command: 
+If you wish to re-run the model pipeline, please run the following commands: 
 
-`python run.py run_model_pipeline`
+- Download data from S3: If you do not have the raw application data in 'data/sample/application_data.csv', please refer to the 'Download data from S3' section above.
 
-The resulting model would be stored in the following location: `models/randomforest.joblib`.
+- Clean data: 
 
-The model evaluation results (Metrics: Area Under Curve (AUC) & Correct Classification Rate(CCR)) would be stored in the following location: `data/evaluation_results.csv`
+`python run.py run_model_pipeline --step clean --config=config/config.yaml --output=data/artifacts/cleaned.csv`
+
+The resulting cleaned data will be stored in the following location: `data/artifacts/cleaned.csv` 
+  
+- Generate new features and one-hot-encode categorical columns: 
+
+`python run.py run_model_pipeline --step featurize --input=data/artifacts/cleaned.csv --config=config/config.yaml --output=data/artifacts/featurized.csv`
+
+The resulting featurized data will be stored in the following location: `data/artifacts/featurized.csv` 
+
+- Model training and evaluation: 
+
+`python run.py run_model_pipeline --step model --input=data/artifacts/featurized.csv --config=config/config.yaml --output=models/randomforest.joblib`
+
+The resulting model will be stored in the following location: `models/randomforest.joblib`.
+
+The model evaluation results (Metrics: Area Under Curve (AUC) & Correct Classification Rate(CCR)) will be stored in the following location: `data/artifacts/evaluation_results.csv`
 
 
 ### 5. Running the App
@@ -297,9 +314,9 @@ In order to acquire data, land data into S3, download data from S3, create table
 
 - Method 2: `docker build -f Dockerfile -t bse1248_application_data .`
  
-### 2. Load data into S3 and Download data from S3
+### 2. Load data into S3 and Download data from S3 - Docker
 
-#### AWS Credentials Configuration
+#### AWS Credentials Configuration - Docker
 
 In order to connect to S3, you would first need to configure your AWS Credentials.
 To configure AWS credentials, run the following commands in terminal to load your credentials as environment variables: 
@@ -310,7 +327,7 @@ To configure AWS credentials, run the following commands in terminal to load you
 `export AWS_SECRET_ACCESS_KEY="YOUR_SECRET_ACCESS_KEY"`
 
 
-#### Load data into S3
+#### Load data into S3 - Docker
 
 Run the following command to load data to S3: 
 
@@ -329,7 +346,7 @@ Without specifying `--local_path` and `s3_path`, the default local path is: `dat
 
 - If you want to upload data to a different S3 path, specify by adding the following: `--s3_path <s3_file_path>`
 
-#### Download data from S3 
+#### Download data from S3 - Docker
 
 This step is completely OPTIONAL. If you would like to download the data used for this project from S3, please run the following commands: 
 
@@ -351,9 +368,9 @@ Without specifying `--local_path` and `s3_path`, the default local path is: `dat
 
 - If you want to upload data to a different S3 path, specify by adding the following: `--s3_path <s3_file_path>`
 
-### 3. Initialize the database 
+### 3. Initialize the database - Docker
 
-#### Option 1: Create the Database Locally
+#### Option 1: Create the Database Locally - Docker
 
 In order to create the database locally, please run the following command to make sure that your environmental variable MYSQL_HOST is empty by running the following command:
 
@@ -368,9 +385,9 @@ Then, you can run the following command to create the database locally:
 The default Engine String is: `sqlite:///data/application.db`. If you would like to store it elsewhere, please specify the engine string.
 
 
-#### Option 2: Create the Database on RDS
+#### Option 2: Create the Database on RDS - Docker
 
-##### Step 1: Configure Environment Variables 
+##### Step 1: Configure Environment Variables - Docker
 
 This step is to prepare for creating the database on RDS. In order to create the database on RDS, you would first need to configure some environmental variables.
 
@@ -388,7 +405,7 @@ After done with the above, press `esc`, type `wq`, and press `return` on your ke
 
 Type the following command in your terminal to update the .mysqlconfig file: `source .mysqlconfig`
 
-##### Step 2: Create the Database on RDS
+##### Step 2: Create the Database on RDS - Docker
 
 To initialize an empty database on RDS, run the following command in your terminal: 
 
@@ -396,7 +413,7 @@ To initialize an empty database on RDS, run the following command in your termin
 
 Please note that if you choose to initialize an empty database on RDS, you would not be able to see the previous records that are already in the database. 
 
-##### Test Connection to Database 
+##### Test Connection to Database - Docker
 
 To test if you can connect to the database, run the following command: 
 
@@ -410,22 +427,43 @@ If successfully connected, you may run the following commands:
 - You may check the columns within a table by running: `show columns from <table_name>;`
 
 
-### 4. Model Pipeline
+### 4. Model Pipeline - Docker
 
 In this model pipeline, we will download data from S3, clean data, generate new features, one hot encode the categorical columns, and finally train a Random Forest Classifier as well as output the evaluation results.
 
-A Random Forest Classifier was the model built to make predictions on loan delinquency for new applicants. The pre-trained model is located in this repository with the following path: `models/randomforest.joblib`. 
+A Random Forest Classifier was the model built to make predictions on loan delinquency for new applicants. The pre-trained model is located in this repository with the following path: `models/randomforest.joblib`. The intermediate artifacts and the model evaluation results are stored in the `data/artifacts` folder. 
 
-If you wish to re-run the model pipeline, please run the following command: 
+If you wish to re-run the model pipeline, please run the following commands: 
+
+- Download data from S3: If you do not have the raw application data in 'data/sample/application_data.csv', please refer to the 'Download data from S3 - Docker' section above.
+
+- Clean data: 
+
+`make clean`
+
+If you run this command above, it will automatically download the raw data from S3 for you. 
+
+The resulting cleaned data will be stored in the following location: `data/artifacts/cleaned.csv` . 
+  
+- Generate new features and one-hot-encode categorical columns: 
+
+`make featurized`
+
+If you run this command above, it will automatically download the raw data from S3 and clean the data for you. 
+
+The resulting featurized data will be stored in the following location: `data/artifacts/featurized.csv` 
+
+- Model training and evaluation: 
 
 `make model`
 
-The resulting model would be stored in the following location: `models/randomforest.joblib`.
+If you run this command above, it will automatically download the raw data from S3, clean the data, and generate new features for you. 
 
-The model evaluation results (Metrics: Area Under Curve (AUC) & Correct Classification Rate(CCR)) would be stored in the following location: `data/evaluation_results.csv`
+The resulting model will be stored in the following location: `models/randomforest.joblib`.
 
+The model evaluation results (Metrics: Area Under Curve (AUC) & Correct Classification Rate(CCR)) will be stored in the following location: `data/artifacts/evaluation_results.csv`
 
-### 5. Running the App
+### 5. Running the App - Docker
 
 #### Step 1: Build a Second Docker Image
 
@@ -435,12 +473,22 @@ If you wish to run the App in Docker, you need to first build a second docker im
 
 - Method 2: `docker build -f app/Dockerfile -t bse1248_application .`
 
-Then you can run the following command to run this app using the following command: `make app`
+#### Step 2: Define SQLALCHEMY_DATABASE_URI
+
+Before running the app, you also need to define SQLALCHEMY_DATABASE_URI by using the command below: 
+
+`export SQLALCHEMY_DATABASE_URI = "YOUR_DATABASE_URL"`
+
+#### Step 3: Run the app
+
+Then you can run the following command to run this app using the following command: 
+
+`make app`
 
 You should now be able to access the app at http://0.0.0.0:5000/ in your browser.
 
 
-### 6. Testing
+### 6. Testing - Docker
 
 Unit test is run for src/acquire.py, src/features.py, src/predict.py, and src/s3.py. One "happy path" and one "unhappy path" per function would tested. 
 
