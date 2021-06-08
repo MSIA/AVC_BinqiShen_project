@@ -165,9 +165,13 @@ python run.py upload_file_to_s3 --local_path <local_file_path> --s3path <s3_file
 
 Without specifying `--local_path` and `s3_path`, the default local path is: `data/sample/application_data.csv` and the default s3 path is: `s3://2021-msia423-shen-binqi/raw/application_data.csv`. 
 
-- If you want to upload data from a different local path, specify by adding the following: `--local_path <local_file_path>`
+- If you want to upload data from a different local path, specify by adding the following: 
 
-- If you want to upload data to a different S3 path, specify by adding the following: `--s3_path <s3_file_path>`
+`--local_path <local_file_path>`
+
+- If you want to upload data to a different S3 path, specify by adding the following: 
+
+`--s3_path <s3_file_path>`
 
 #### Download data from S3 
 
@@ -179,9 +183,13 @@ python run.py download_file_from_s3 --local_path <local_file_path> --s3_path <s3
 
 Without specifying `--local_path` and `s3_path`, the default local path is: `data/sample/application_data.csv` and the default s3 path is: `s3://2021-msia423-shen-binqi/raw/application_data.csv`. 
 
-- If you want to upload data from a different local path, specify by adding the following: `--local_path <local_file_path>`
+- If you want to upload data from a different local path, specify by adding the following: 
 
-- If you want to upload data to a different S3 path, specify by adding the following: `--s3_path <s3_file_path>`
+`--local_path <local_file_path>`
+
+- If you want to upload data to a different S3 path, specify by adding the following: 
+
+`--s3_path <s3_file_path>`
 
 
 ### 3. Initialize the database 
@@ -257,7 +265,9 @@ A Random Forest Classifier was the model built to make predictions on loan delin
 
 If you wish to re-run the model pipeline, please run the following commands: 
 
-- Download data from S3: If you do not have the raw application data in 'data/sample/application_data.csv', please refer to the 'Download data from S3' section above.
+- Download data from S3: 
+
+If you do not have the raw application data in 'data/sample/application_data.csv', please refer to the 'Download data from S3' section above.
 
 - Clean data: 
 
@@ -342,9 +352,13 @@ docker run \
 
 Without specifying `--local_path` and `s3_path`, the default local path is: `data/sample/application_data.csv` and the default s3 path is: `s3://2021-msia423-shen-binqi/raw/application_data.csv`. 
 
-- If you want to upload data from a different local path, specify by adding the following: `--local_path <local_file_path>`
+- If you want to upload data from a different local path, specify by adding the following: 
 
-- If you want to upload data to a different S3 path, specify by adding the following: `--s3_path <s3_file_path>`
+`--local_path <local_file_path>`
+
+- If you want to upload data to a different S3 path, specify by adding the following: 
+
+`--s3_path <s3_file_path>`
 
 #### Download data from S3 - Docker
 
@@ -364,9 +378,13 @@ This step is completely OPTIONAL. If you would like to download the data used fo
 
 Without specifying `--local_path` and `s3_path`, the default local path is: `data/sample/application_data.csv` and the default s3 path is: `s3://2021-msia423-shen-binqi/raw/application_data.csv`. 
 
-- If you want to upload data from a different local path, specify by adding the following: `--local_path <local_file_path>`
+- If you want to upload data from a different local path, specify by adding the following: 
 
-- If you want to upload data to a different S3 path, specify by adding the following: `--s3_path <s3_file_path>`
+`--local_path <local_file_path>`
+
+- If you want to upload data to a different S3 path, specify by adding the following: 
+
+`--s3_path <s3_file_path>`
 
 ### 3. Initialize the database - Docker
 
@@ -435,7 +453,9 @@ A Random Forest Classifier was the model built to make predictions on loan delin
 
 If you wish to re-run the model pipeline, please run the following commands: 
 
-- Download data from S3: If you do not have the raw application data in 'data/sample/application_data.csv', please refer to the 'Download data from S3 - Docker' section above.
+- Download data from S3: 
+
+If you do not have the raw application data in 'data/sample/application_data.csv', please refer to the 'Download data from S3 - Docker' section above.
 
 - Clean data: 
 
