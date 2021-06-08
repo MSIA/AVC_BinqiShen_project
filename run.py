@@ -118,7 +118,7 @@ if __name__ == '__main__':
         rf_mod = model_result[0]
         X_test = model_result[1]
         y_test = model_result[2]
-        evaluate_result = evaluate(rf_mod, X_test, y_test)
+        evaluate_result = evaluate(rf_mod, X_test, y_test, **conf['model']['evaluate'])
 
         # save the trained model
         joblib.dump(rf_mod, conf['predict']['get_prediction']['model_path'])

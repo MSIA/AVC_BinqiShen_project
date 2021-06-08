@@ -33,7 +33,7 @@ def train_model(data, target_colname, sample_strat, ts, n_estimat, max_dep, rand
     logger.info('Major class initial count: %i', target[target == 0].shape[0])
 
     # define oversampling strategy
-    oversample = RandomOverSampler(sampling_strategy=sample_strat)
+    oversample = RandomOverSampler(sampling_strategy=sample_strat, random_state=rand_state)
     # fit and apply the transform
     X_over, y_over = oversample.fit_resample(features, target)
     logger.info('Minor class oversampled count: %i', y_over[y_over == 1].shape[0])
@@ -50,7 +50,7 @@ def train_model(data, target_colname, sample_strat, ts, n_estimat, max_dep, rand
     return [rf, X_test, y_test]
 
 
-def evaluate(rf_model, X_test, y_test):
+def evaluate(rf_model, X_test, y_test, save_path):
     """ Score the random forest model and evaluate the model performance
 
     Args:
@@ -68,17 +68,18 @@ def evaluate(rf_model, X_test, y_test):
     ypred_bin_test = rf_model.predict(X_test[x_names])
 
     # calculate metrics
-    auc = sklearn.metrics.roc_auc_score(y_test, ypred_proba_test)
-    confusion = sklearn.metrics.confusion_matrix(y_test, ypred_bin_test)
-    accuracy = sklearn.metrics.accuracy_score(y_test, ypred_bin_test)
+    test_auc = sklearn.metrics.roc_auc_score(y_test, ypred_proba_test)
+
+    test_acc = sklearn.metrics.accuracy_score(y_test, ypred_bin_test)
 
     logger.info('Completed evaluation of the Random Forest Classifier')
+    logger.info('AUC on test: %0.3f', test_auc)
+    logger.info('Accuracy on test: %0.3f', test_acc)
 
-    print('************************** Model Results ***************************')
-    print('AUC on test: %0.3f' % auc)
-    print('Accuracy on test: %0.3f' % accuracy)
-    print()
-    print(pd.DataFrame(confusion,
-                       index=['Actual negative', 'Actual positive'],
-                       columns=['Predicted negative', 'Predicted positive']))
-    print('********************************************************************')
+    try:
+        eval_result = pd.DataFrame({"AUC": test_auc, "ACC": test_acc}, index=[0])
+        eval_result.to_csv(save_path, index=False)
+        logger.info("Evaluation results saved to location: %s", save_path)
+    except ValueError:
+        logger.error("Failed to save the evaluation results because "
+                     "the DataFrame of evaluation results cannot be appropriately called")

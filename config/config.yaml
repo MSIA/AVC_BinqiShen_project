@@ -77,6 +77,8 @@ model:
     n_estimat: 10
     max_dep: 10
     rand_state: 0
+  evaluate:
+    save_path: data/evaluation_result.csv
 predict:
   transform_input:
     cat_cols:
