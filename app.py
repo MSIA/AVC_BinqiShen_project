@@ -28,9 +28,12 @@ logger.debug('Web app log')
 application_manager = ApplicationManager(app)
 
 # load yaml configuration file
-with open('config/config.yaml', "r") as file:
-    conf = yaml.load(file, Loader=yaml.FullLoader)
-logger.info("Configuration file loaded")
+try:
+    with open('config/config.yaml', "r") as file:
+        conf = yaml.load(file, Loader=yaml.FullLoader)
+        logger.info("Configuration file loaded")
+except FileNotFoundError:
+    logger.error("Configuration file is not found")
 
 
 @app.route('/')

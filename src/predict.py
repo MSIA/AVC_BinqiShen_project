@@ -62,7 +62,11 @@ def get_prediction(input_ohe, model_path, ohe_cols):
 
     """
     # load pre-trained model
-    loaded_rf = joblib.load(model_path)
+    try:
+        loaded_rf = joblib.load(model_path)
+        logger.info('Loaded model from %s', model_path)
+    except OSError:
+        logger.error('Model is not found from %s', model_path)
     # predict probability of loan_delinquency with the new user input
     pred_prob = np.round(100 * loaded_rf.predict_proba(input_ohe[ohe_cols])[:, 1][0], 2)
     # predict the class with the new user input

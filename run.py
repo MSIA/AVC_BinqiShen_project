@@ -118,9 +118,12 @@ if __name__ == '__main__':
         download_file_from_s3(args.local_path, args.s3_path)
     elif sp_used == 'run_model_pipeline':
         # load yaml configuration file
-        with open(args.config, "r") as f:
-            conf = yaml.load(f, Loader=yaml.FullLoader)
-        logger.info("Configuration file loaded from %s" % args.config)
+        try:
+            with open(args.config, "r") as f:
+                conf = yaml.load(f, Loader=yaml.FullLoader)
+                logger.info("Configuration file loaded from %s" % args.config)
+        except FileNotFoundError:
+            logger.error("Configuration file from %s is not found" % args.config)
 
         if args.input is not None:
             input = pd.read_csv(args.input)
