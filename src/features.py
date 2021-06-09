@@ -1,3 +1,7 @@
+"""
+This module contains multiple functions that offers
+featurizing and one-hot-encoding functionality
+"""
 import logging
 
 import pandas as pd
@@ -9,14 +13,18 @@ pd.options.mode.chained_assignment = None
 
 
 def day_to_year(df, new_cols_dict):
-    """Generate features from specified columns where the units of calculation was in 'days' to count in 'years'
+    """Generate features from specified columns where the
+        units of calculation was in 'days' to count in 'years'
 
     Args:
-        df (:obj:`DataFrame <pandas.DataFrame>`): input DataFrame with original 'days' columns
-        new_cols_dict (dict of {str : str}): a dictionary that stores the new and original column names
+        df (:obj:`DataFrame <pandas.DataFrame>`): input DataFrame
+            with original 'days' columns
+        new_cols_dict (dict of {str : str}): a dictionary that
+            stores the new and original column names
 
     Returns:
-        df (:obj:`DataFrame <pandas.DataFrame>`): a resulting DataFrame with new 'years' columns created
+        df (:obj:`DataFrame <pandas.DataFrame>`): a resulting DataFrame
+            with new 'years' columns created
 
     """
     for key, value in new_cols_dict.items():
@@ -46,14 +54,19 @@ def featurize(df, dty_cols_dict, old_col, new_col):
     """Generate new features with the given DataFrame
 
     Args:
-        df (:obj:`DataFrame <pandas.DataFrame>`): input DataFrame of cleaned loan applicant records
-        dty_cols_dict (dict of {str : str}): a dictionary that stores the new and original column names for changing
-                                             units of calculation from 'days' to 'years' (default in config.yaml)
-        old_col (str): the old column to generate 'new_col' from; default is 'days_employed' (config.yaml)
-        new_col (str): the new column generated from the 'old_col'; default is 'Employed' (config.yaml)
+        df (:obj:`DataFrame <pandas.DataFrame>`): input DataFrame
+            of cleaned loan applicant records
+        dty_cols_dict (dict of {str : str}): a dictionary that stores
+            the new and original column names for changing units of calculation
+            from 'days' to 'years' (default in config.yaml)
+        old_col (str): the old column to generate 'new_col' from;
+            default is 'days_employed' (config.yaml)
+        new_col (str): the new column generated from the 'old_col';
+            default is 'Employed' (config.yaml)
 
     Returns:
-        df_featurized (:obj:`DataFrame <pandas.DataFrame>`): a resulting DataFrame with the new features created
+        df_featurized (:obj:`DataFrame <pandas.DataFrame>`): a resulting DataFrame
+            with the new features created
 
     """
     df_new = day_to_year(df, dty_cols_dict)
@@ -66,10 +79,14 @@ def get_ohe_data(df, cat_vars, num_vars, target_col):
     """One Hot Encode categorical variables in a DataFrame to prepare for modeling
 
     Args:
-        df (:obj:`DataFrame <pandas.DataFrame>`): input DataFrame of featurized loan applicant records
-        cat_vars (:obj:`list`): list of categorical columns in the DataFrame (default in config.yaml)
-        num_vars (:obj:`list`): list of numerical columns in the DataFrame (default in config.yaml)
-        target_col (str): the target column in the DataFrame; default is 'target' (config.yaml)
+        df (:obj:`DataFrame <pandas.DataFrame>`): input DataFrame of
+            featurized loan applicant records
+        cat_vars (:obj:`list`): list of categorical columns in the DataFrame
+            (default in config.yaml)
+        num_vars (:obj:`list`): list of numerical columns in the DataFrame
+            (default in config.yaml)
+        target_col (str): the target column in the DataFrame; default is 'target'
+            (default in config.yaml)
 
     Returns:
         df_ohe (:obj:`DataFrame <pandas.DataFrame>`): a resulting one-hot-encoded DataFrame

@@ -1,3 +1,7 @@
+"""
+This file contains multiple functions that offers
+creating database and adding new data to the database functionality
+"""
 import logging.config
 
 import sqlalchemy
@@ -58,7 +62,8 @@ def create_db(engine_string: str):
     except sqlalchemy.exc.ArgumentError:
         logger.error('%s is not a valid engine string', engine_string)
     except sqlalchemy.exc.OperationalError:
-        logger.error('Failed to connect to server. Please check if you are connected to Northwestern VPN')
+        logger.error('Failed to connect to server. '
+                     'Please check if you are connected to Northwestern VPN')
 
 
 class ApplicationManager:
@@ -114,11 +119,14 @@ class ApplicationManager:
             edu_type (str): Level of highest education the client achieved
             family_status (str): Family status of the client
             age (int): Client's age at the time of application
-            years_employed (int): Number of years before the application the person started current employment
-            years_id_publish (int): Number of years before the application did client change the identity document
+            years_employed (int): Number of years before the application
+                the person started current employment
+            years_id_publish (int): Number of years before the application
+                did client change the identity document
             phone_contactable (str): Whether the phone provided is reachable
             cnt_family_members (int): Number of family members does client have
-            amt_req_credit_bureau_day (int): Number of enquiries to Credit Bureau about the client
+            amt_req_credit_bureau_day (int): Number of enquiries to
+                Credit Bureau about the client
             employed (str): Whether the applicant is employed
 
         Returns:
@@ -150,4 +158,5 @@ class ApplicationManager:
             session.commit()
             logger.info("A new customer added to the database")
         except sqlalchemy.exc.OperationalError:
-            logger.error('Failed to connect to server. Please check if you are connected to Northwestern VPN')
+            logger.error('Failed to connect to server. '
+                         'Please check if you are connected to Northwestern VPN')

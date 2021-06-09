@@ -1,7 +1,11 @@
+"""
+This file defines command-line arguments from the user and
+delegates tasks to the appropriate module in `src/`.
+"""
 import argparse
 import logging.config
-import pkg_resources
 import os
+import pkg_resources
 
 import yaml
 import joblib
@@ -32,14 +36,16 @@ if __name__ == '__main__':
 
     # Sub-parser for uploading data to s3
     sb_upload = subparsers.add_parser("upload_file_to_s3", help="Upload raw data to s3")
-    sb_upload.add_argument('--s3_path', default='s3://2021-msia423-shen-binqi/raw/application_data.csv',
+    sb_upload.add_argument('--s3_path',
+                           default='s3://2021-msia423-shen-binqi/raw/application_data.csv',
                            help="S3 data path to the data")
     sb_upload.add_argument('--local_path', default='data/sample/application_data.csv',
                            help="local path to the data")
 
     # Sub-parser for downloading data from s3
     sb_upload = subparsers.add_parser("download_file_from_s3", help="Download raw data from s3")
-    sb_upload.add_argument('--s3_path', default='s3://2021-msia423-shen-binqi/raw/application_data.csv',
+    sb_upload.add_argument('--s3_path',
+                           default='s3://2021-msia423-shen-binqi/raw/application_data.csv',
                            help="S3 data path to the data")
     sb_upload.add_argument('--local_path', default='data/sample/application_data.csv',
                            help="local path to the data")
@@ -55,28 +61,38 @@ if __name__ == '__main__':
     sb_ingest.add_argument("--income_total", help="Income of the client")
     sb_ingest.add_argument("--amt_credit", help="Credit amount of the loan")
     sb_ingest.add_argument("--amt_annuity", help="Loan annuity")
-    sb_ingest.add_argument("--amt_goods_price", help="Price of the goods for which the loan is given")
-    sb_ingest.add_argument("--income_type", help="Clients income type (businessman, working, maternity leave)")
+    sb_ingest.add_argument("--amt_goods_price",
+                           help="Price of the goods for which the loan is given")
+    sb_ingest.add_argument("--income_type",
+                           help="Clients income type (businessman, working, maternity leave)")
     sb_ingest.add_argument("--edu_type", help="Level of highest education the client achieved")
     sb_ingest.add_argument("--family_status", help="Family status of the client")
     sb_ingest.add_argument("--age", help="Client's age in days at the time of application")
-    sb_ingest.add_argument("--years_employed", help="# days before the application one started current employment")
-    sb_ingest.add_argument("--years_id_publish", help="# days before the application one change the identity document")
-    sb_ingest.add_argument("--phone_contactable", help="Whether the client is reachable by the phone provided")
+    sb_ingest.add_argument("--years_employed",
+                           help="# days before the application one started current employment")
+    sb_ingest.add_argument("--years_id_publish",
+                           help="# days before the application one change the identity document")
+    sb_ingest.add_argument("--phone_contactable",
+                           help="Whether the client is reachable by the phone provided")
     sb_ingest.add_argument("--cnt_family_members", help="Number of family members does client have")
-    sb_ingest.add_argument("--amt_req_credit_bureau_day", help="# enquiries to Credit Bureau about the client")
-    sb_ingest.add_argument("--employed",  help="Flag if the client is employed")
+    sb_ingest.add_argument("--amt_req_credit_bureau_day",
+                           help="# enquiries to Credit Bureau about the client")
+    sb_ingest.add_argument("--employed", help="Flag if the client is employed")
     sb_ingest.add_argument("--engine_string", default='sqlite:///data/application.db',
                            help="SQLAlchemy Connection URI for database")
 
     # Sub-parser for acquiring, cleaning, and running model pipeline
     sb_pipeline = subparsers.add_parser("run_model_pipeline",
-                                        description="Acquire data, clean data, featurize data, and run model-pipeline")
+                                        description="Acquire data, clean data, "
+                                                    "featurize data, and run model-pipeline")
     sb_pipeline.add_argument('--step', help="Which step to run",
                              choices=['clean', 'featurize', 'model', 'test'])
-    sb_pipeline.add_argument('--input', '-i', default=None, help='Path to input data (optional, default = None)')
-    sb_pipeline.add_argument('--config', default='config/config.yaml', help='Path to configuration file')
-    sb_pipeline.add_argument('--output', '-o', default=None, help='Path to save output (optional, default = None)')
+    sb_pipeline.add_argument('--input', '-i', default=None,
+                             help='Path to input data (optional, default = None)')
+    sb_pipeline.add_argument('--config', default='config/config.yaml',
+                             help='Path to configuration file')
+    sb_pipeline.add_argument('--output', '-o', default=None,
+                             help='Path to save output (optional, default = None)')
 
     args = parser.parse_args()
     sp_used = args.subparser_name

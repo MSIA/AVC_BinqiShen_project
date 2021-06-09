@@ -1,3 +1,7 @@
+"""
+This file contains multiple functions that offers
+the functionality to interact with S3
+"""
 import logging
 import re
 
@@ -46,7 +50,8 @@ def upload_file_to_s3(local_path, s3_path):
     try:
         bucket.upload_file(local_path, s3_just_path)
     except botocore.exceptions.NoCredentialsError:
-        logger.error('Please provide AWS credentials via AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY env variables.')
+        logger.error('Please provide AWS credentials via AWS_ACCESS_KEY_ID '
+                     'and AWS_SECRET_ACCESS_KEY env variables.')
     else:
         logger.info('Data uploaded from %s to %s', local_path, s3_path)
 
@@ -70,6 +75,7 @@ def download_file_from_s3(local_path, s3_path):
     try:
         bucket.download_file(s3_just_path, local_path)
     except botocore.exceptions.NoCredentialsError:
-        logger.error('Please provide AWS credentials via AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY env variables.')
+        logger.error('Please provide AWS credentials via AWS_ACCESS_KEY_ID '
+                     'and AWS_SECRET_ACCESS_KEY env variables.')
     else:
         logger.info("Data downloaded from %s to %s", s3_path, local_path)

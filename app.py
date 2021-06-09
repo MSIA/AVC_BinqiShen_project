@@ -1,3 +1,6 @@
+"""
+This file defines some functionality in the app
+"""
 import traceback
 import logging.config
 
@@ -97,21 +100,31 @@ def add_entry():
             )
 
             # Get loan delinquency prediction for the new applicant
-            user_input = {'contract_type': request.form['contract_type'], 'gender': request.form['gender'],
-                          'own_car': request.form['own_car'], 'own_realty': request.form['own_realty'],
-                          'num_children': request.form['num_children'], 'income_total': request.form['income_total'],
-                          'amt_credit': request.form['amt_credit'], 'amt_annuity': request.form['amt_annuity'],
-                          'amt_goods_price': request.form['amt_goods_price'], 'income_type': request.form['income_type'],
-                          'edu_type': request.form['edu_type'], 'family_status': request.form['family_status'],
-                          'Age': request.form['age'], 'Years_Employed': request.form['years_employed'],
+            user_input = {'contract_type': request.form['contract_type'],
+                          'gender': request.form['gender'],
+                          'own_car': request.form['own_car'],
+                          'own_realty': request.form['own_realty'],
+                          'num_children': request.form['num_children'],
+                          'income_total': request.form['income_total'],
+                          'amt_credit': request.form['amt_credit'],
+                          'amt_annuity': request.form['amt_annuity'],
+                          'amt_goods_price': request.form['amt_goods_price'],
+                          'income_type': request.form['income_type'],
+                          'edu_type': request.form['edu_type'],
+                          'family_status': request.form['family_status'],
+                          'Age': request.form['age'],
+                          'Years_Employed': request.form['years_employed'],
                           'Years_ID_Publish': request.form['years_id_publish'],
                           'phone_contactable': request.form['phone_contactable'],
                           'cnt_family_members': request.form['cnt_family_members'],
                           'amt_req_credit_bureau_day': request.form['amt_req_credit_bureau_day'],
                           'Employed': request.form['employed']}
-            user_input_transformed = transform_input(user_input, **conf['predict']['transform_input'])
-            user_prob = get_prediction(user_input_transformed, **conf['predict']['get_prediction'])[0]
-            user_bin = get_prediction(user_input_transformed, **conf['predict']['get_prediction'])[1]
+            user_input_transformed = transform_input(user_input,
+                                                     **conf['predict']['transform_input'])
+            user_prob = get_prediction(user_input_transformed,
+                                       **conf['predict']['get_prediction'])[0]
+            user_bin = get_prediction(user_input_transformed,
+                                      **conf['predict']['get_prediction'])[1]
 
             logger.info(
                 "The new applicant's probability of loan delinquency is: %f percent, "

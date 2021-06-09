@@ -1,3 +1,7 @@
+"""
+This module contains multiple functions that offers
+user input transformation and prediction functionality
+"""
 import logging
 
 import joblib
@@ -16,7 +20,8 @@ def transform_input(ui_dict, cat_cols, ohe_cols):
         ohe_cols (:obj: `list`): a list of required columns in the transformed user input DataFrame
 
     Returns:
-        input_new (:obj:`DataFrame <pandas.DataFrame>`): DataFrame that stores the transformed user input
+        input_new (:obj:`DataFrame <pandas.DataFrame>`): DataFrame that
+            stores the transformed user input
 
     """
     # transform the user input into a pandas DataFrame
@@ -46,12 +51,14 @@ def get_prediction(input_ohe, model_path, ohe_cols):
 
     Args:
         input_ohe (:obj:`DataFrame <pandas.DataFrame>`): a DataFrame of the transformed user input
-        model_path (str): the path to trained model; default is 'models/randomforest.joblib' (config.yaml)
+        model_path (str): the path to trained model;
+            default is 'models/randomforest.joblib' (config.yaml)
         ohe_cols (:obj:`list`): the required columns used in the trained Random Forest Classifier
 
     Returns:
-        [pred_prob, pred_bin] (:obj:`list`): the first object in the list is the predicted probability of loan
-        delinquency where the second object in the list is the predicted class for the applicant
+        [pred_prob, pred_bin] (:obj:`list`): the first object in the list is
+            the predicted probability of loan delinquency where the second object
+            in the list is the predicted class for the applicant
 
     """
     # load pre-trained model
