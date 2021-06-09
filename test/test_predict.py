@@ -1,3 +1,6 @@
+"""
+Test predict.py module
+"""
 import pytest
 
 import pandas as pd
@@ -8,12 +11,14 @@ from src.predict import transform_input
 def test_transform_input():
     """test1 (transform_input()): happy path for expected behavior"""
     # Define input DataFrame
-    sample_input = {'contract_type': "Cash Loans", 'gender': "Female", 'Age': 23, 'own_car': "Yes",
-                    'own_realty': "Yes", 'num_children': 0, 'income_total': 200000, 'amt_credit': 10000,
-                    'amt_annuity': 14000, 'amt_goods_price': 30000, 'income_type': 'Working',
+    sample_input = {'contract_type': "Cash Loans", 'gender': "Female", 'own_car': "Yes",
+                    'own_realty': "Yes", 'num_children': 0, 'income_total': 200000,
+                    'amt_credit': 10000, 'amt_annuity': 14000,
+                    'amt_goods_price': 30000, 'income_type': 'Working',
                     'edu_type': 'Secondary education', 'family_status': 'Single / not married',
-                    'Age': 23, 'Years_Employed': 2, 'Years_ID_Publish': 10, 'phone_contactable': "Yes",
-                    'cnt_family_members': 4, 'amt_req_credit_bureau_day': 0, 'Employed': "No"}
+                    'Age': 23, 'Years_Employed': 2, 'Years_ID_Publish': 10,
+                    'phone_contactable': "Yes", 'cnt_family_members': 4,
+                    'amt_req_credit_bureau_day': 0, 'Employed': "No"}
 
     # Define expected output, df_true
     df_true = pd.DataFrame(
@@ -40,7 +45,8 @@ def test_transform_input():
     ohe_cols = ['num_children', 'income_total', 'amt_credit', 'amt_annuity',
                 'amt_goods_price', 'Age', 'Years_Employed', 'Years_ID_Publish',
                 'cnt_family_members', 'amt_req_credit_bureau_day',
-                'contract_type_Revolving loans', 'gender_Male', 'gender_Not Provided', 'own_car_Yes',
+                'contract_type_Revolving loans', 'gender_Male',
+                'gender_Not Provided', 'own_car_Yes',
                 'own_reality_Yes', 'income_type_Commercial associate',
                 'income_type_Maternity leave', 'income_type_Pensioner',
                 'income_type_State servant', 'income_type_Student',
@@ -63,7 +69,8 @@ def test_transform_input_non_dict():
     ohe_cols = ['num_children', 'income_total', 'amt_credit', 'amt_annuity',
                 'amt_goods_price', 'Age', 'Years_Employed', 'Years_ID_Publish',
                 'cnt_family_members', 'amt_req_credit_bureau_day',
-                'contract_type_Revolving loans', 'gender_Male', 'gender_Not Provided', 'own_car_Yes',
+                'contract_type_Revolving loans', 'gender_Male',
+                'gender_Not Provided', 'own_car_Yes',
                 'own_reality_Yes', 'income_type_Commercial associate',
                 'income_type_Maternity leave', 'income_type_Pensioner',
                 'income_type_State servant', 'income_type_Student',

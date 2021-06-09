@@ -1,3 +1,6 @@
+"""
+Test s3.py module
+"""
 import pytest
 
 from src.s3 import parse_s3

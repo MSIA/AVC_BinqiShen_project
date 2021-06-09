@@ -1,3 +1,6 @@
+"""
+Test features.py module
+"""
 import pytest
 
 import pandas as pd
@@ -238,5 +241,3 @@ def test_get_ohe_data_non_df():
 
     with pytest.raises(TypeError):
         get_ohe_data(df_in, cat_vars, num_vars, 'target')
-
-
